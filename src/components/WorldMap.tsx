@@ -1,135 +1,173 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { MapPin } from "lucide-react";
 
-interface MarkerData {
+interface Pin {
   id: string;
   x: number;
   y: number;
-  lat: number;
-  lng: number;
+  country: string;
 }
 
 export const WorldMap = () => {
-  const [markers, setMarkers] = useState<MarkerData[]>([]);
-  const mapRef = useRef<HTMLDivElement>(null);
+  const [pins, setPins] = useState<Pin[]>([]);
 
-  // Convert pixel coordinates to approximate lat/lng
-  const pixelToLatLng = (x: number, y: number) => {
-    // Simple mercator projection approximation
-    const lat = 85.0511 - (y / 100) * 170.1022;
-    const lng = (x / 100) * 360 - 180;
-    return { lat: Math.round(lat * 1000000) / 1000000, lng: Math.round(lng * 1000000) / 1000000 };
-  };
-
-  const handleMapClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (!mapRef.current) return;
-    
-    const rect = mapRef.current.getBoundingClientRect();
+  const handleMapClick = (event: React.MouseEvent<SVGElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
     const x = ((event.clientX - rect.left) / rect.width) * 100;
     const y = ((event.clientY - rect.top) / rect.height) * 100;
-    
-    const { lat, lng } = pixelToLatLng(x, y);
-    
-    const newMarker: MarkerData = {
+
+    // Simple country detection based on coordinates (rough approximation)
+    const getCountryFromCoordinates = (x: number, y: number): string => {
+      if (x > 15 && x < 35 && y > 15 && y < 45) return "Europe";
+      if (x > 5 && x < 25 && y > 45 && y < 85) return "Africa";
+      if (x > 35 && x < 75 && y > 15 && y < 60) return "Asia";
+      if (x > 75 && x < 85 && y > 25 && y < 55) return "Japan";
+      if (x > 85 && x < 95 && y > 50 && y < 85) return "Australia";
+      if (x > 12 && x < 35 && y > 10 && y < 50) return "North America";
+      if (x > 20 && x < 40 && y > 60 && y < 90) return "South America";
+      return "Unknown Location";
+    };
+
+    const country = getCountryFromCoordinates(x, y);
+    const newPin: Pin = {
       id: Date.now().toString(),
       x,
       y,
-      lat,
-      lng,
+      country,
     };
-    
-    setMarkers(prev => [...prev, newMarker]);
+
+    setPins(prev => [...prev, newPin]);
   };
 
-  const removeMarker = (id: string) => {
-    setMarkers(prev => prev.filter(marker => marker.id !== id));
+  const removePin = (id: string) => {
+    setPins(prev => prev.filter(pin => pin.id !== id));
   };
 
   return (
-    <div className="h-screen w-full relative overflow-hidden">
-      {/* World Map Background */}
-      <div
-        ref={mapRef}
-        className="w-full h-full cursor-crosshair relative"
-        onClick={handleMapClick}
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 1000 500' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='1000' height='500' fill='%23E3F2FD'/%3E%3C!-- World continents --%3E%3Cpath d='M80 150 Q120 120 180 150 L220 180 Q250 200 280 250 L300 300 Q280 350 250 380 L200 400 Q150 380 120 350 L100 300 Q80 250 80 200 Z' fill='%23388E3C' opacity='0.8'/%3E%3Cpath d='M200 450 Q230 420 260 450 L280 500 Q300 600 280 700 L250 750 Q220 780 200 750 L180 700 Q160 600 180 500 Q190 470 200 450 Z' fill='%23388E3C' opacity='0.8'/%3E%3Cpath d='M350 180 Q400 150 450 180 L480 220 Q470 280 450 300 L420 320 Q380 300 360 280 L350 250 Q340 200 350 180 Z' fill='%232E7D32' opacity='0.9'/%3E%3Cpath d='M350 350 Q400 320 450 350 L480 400 Q500 500 480 600 L450 650 Q400 680 350 650 L320 600 Q300 500 320 400 Q330 370 350 350 Z' fill='%2366BB6A' opacity='0.8'/%3E%3Cpath d='M500 200 Q600 150 700 200 L750 250 Q780 350 750 400 L700 450 Q600 420 550 380 L520 350 Q500 300 500 250 Q490 220 500 200 Z' fill='%23388E3C' opacity='0.8'/%3E%3Cpath d='M650 480 Q700 450 750 480 L780 520 Q770 580 750 600 L700 620 Q650 600 630 580 L620 550 Q620 500 650 480 Z' fill='%232E7D32' opacity='0.9'/%3E%3C/svg%3E")`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}
-      >
-        {/* Grid overlay for better visual reference */}
-        <div className="absolute inset-0 opacity-10">
-          <svg className="w-full h-full">
-            {/* Latitude lines */}
-            {[...Array(9)].map((_, i) => (
-              <line
-                key={`lat-${i}`}
-                x1="0"
-                y1={`${(i + 1) * 10}%`}
-                x2="100%"
-                y2={`${(i + 1) * 10}%`}
-                stroke="currentColor"
-                strokeWidth="0.5"
-              />
-            ))}
-            {/* Longitude lines */}
-            {[...Array(17)].map((_, i) => (
-              <line
-                key={`lng-${i}`}
-                x1={`${(i + 1) * 5.55}%`}
-                y1="0"
-                x2={`${(i + 1) * 5.55}%`}
-                y2="100%"
-                stroke="currentColor"
-                strokeWidth="0.5"
-              />
-            ))}
-          </svg>
-        </div>
-
-        {/* Markers */}
-        {markers.map((marker) => (
-          <div
-            key={marker.id}
-            className="absolute transform -translate-x-1/2 -translate-y-full cursor-pointer group"
-            style={{
-              left: `${marker.x}%`,
-              top: `${marker.y}%`,
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              removeMarker(marker.id);
-            }}
-          >
-            <MapPin className="w-6 h-6 text-red-500 drop-shadow-lg animate-bounce" />
-            
-            {/* Popup */}
-            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
-              <div className="bg-white text-gray-800 text-xs rounded-lg px-3 py-2 shadow-lg border border-gray-200 whitespace-nowrap">
-                <div className="font-semibold">Location:</div>
-                <div>Lat: {marker.lat}°</div>
-                <div>Lng: {marker.lng}°</div>
-                <div className="text-gray-500 mt-1">Click to remove</div>
-                {/* Arrow */}
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-white"></div>
-              </div>
-            </div>
-          </div>
-        ))}
+    <div className="w-full max-w-4xl mx-auto p-6">
+      <div className="text-center mb-6">
+        <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
+          Choose Your Destination
+        </h2>
+        <p className="text-muted-foreground">
+          Click anywhere on the map to place a pin for your dream destination
+        </p>
+        {pins.length > 0 && (
+          <p className="text-sm text-primary mt-2">
+            {pins.length} destination{pins.length > 1 ? 's' : ''} selected
+          </p>
+        )}
       </div>
 
-      {/* Instructions overlay */}
-      <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg p-4 shadow-lg max-w-xs">
-        <h3 className="font-semibold text-gray-800 mb-2">Interactive World Map</h3>
-        <p className="text-sm text-gray-600 mb-2">
-          Click anywhere on the map to place a marker and see coordinates.
-        </p>
-        {markers.length > 0 && (
-          <p className="text-xs text-blue-600">
-            {markers.length} marker{markers.length > 1 ? 's' : ''} placed
-          </p>
+      <div className="relative bg-gradient-to-br from-primary/10 to-accent/10 rounded-2xl p-4 shadow-travel">
+        <svg
+          viewBox="0 0 100 60"
+          className="w-full h-auto cursor-crosshair"
+          onClick={handleMapClick}
+        >
+          {/* Simple world map silhouette */}
+          {/* North America */}
+          <path
+            d="M8 15 Q12 12 18 15 L22 18 Q25 20 28 25 L30 30 Q28 35 25 38 L20 40 Q15 38 12 35 L10 30 Q8 25 8 20 Z"
+            fill="hsl(var(--primary))"
+            opacity="0.6"
+            className="hover:opacity-80 transition-opacity"
+          />
+          
+          {/* South America */}
+          <path
+            d="M20 45 Q23 42 26 45 L28 50 Q30 60 28 70 L25 75 Q22 78 20 75 L18 70 Q16 60 18 50 Q19 47 20 45 Z"
+            fill="hsl(var(--primary))"
+            opacity="0.6"
+            className="hover:opacity-80 transition-opacity"
+          />
+          
+          {/* Europe */}
+          <path
+            d="M35 18 Q40 15 45 18 L48 22 Q47 28 45 30 L42 32 Q38 30 36 28 L35 25 Q34 20 35 18 Z"
+            fill="hsl(var(--secondary))"
+            opacity="0.7"
+            className="hover:opacity-90 transition-opacity"
+          />
+          
+          {/* Africa */}
+          <path
+            d="M35 35 Q40 32 45 35 L48 40 Q50 50 48 60 L45 65 Q40 68 35 65 L32 60 Q30 50 32 40 Q33 37 35 35 Z"
+            fill="hsl(var(--accent))"
+            opacity="0.6"
+            className="hover:opacity-80 transition-opacity"
+          />
+          
+          {/* Asia */}
+          <path
+            d="M50 20 Q60 15 70 20 L75 25 Q78 35 75 40 L70 45 Q60 42 55 38 L52 35 Q50 30 50 25 Q49 22 50 20 Z"
+            fill="hsl(var(--primary))"
+            opacity="0.6"
+            className="hover:opacity-80 transition-opacity"
+          />
+          
+          {/* Australia */}
+          <path
+            d="M65 48 Q70 45 75 48 L78 52 Q77 58 75 60 L70 62 Q65 60 63 58 L62 55 Q62 50 65 48 Z"
+            fill="hsl(var(--secondary))"
+            opacity="0.7"
+            className="hover:opacity-90 transition-opacity"
+          />
+
+          {/* Ocean decoration */}
+          <circle cx="15" cy="40" r="1" fill="hsl(var(--primary))" opacity="0.3" />
+          <circle cx="60" cy="45" r="1" fill="hsl(var(--primary))" opacity="0.3" />
+          <circle cx="80" cy="35" r="1" fill="hsl(var(--primary))" opacity="0.3" />
+
+          {/* Render pins */}
+          {pins.map((pin) => (
+            <g key={pin.id}>
+              <circle
+                cx={pin.x}
+                cy={pin.y}
+                r="1.5"
+                fill="hsl(var(--destructive))"
+                className="animate-pin-bounce cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removePin(pin.id);
+                }}
+              />
+              <circle
+                cx={pin.x}
+                cy={pin.y}
+                r="0.5"
+                fill="white"
+                className="animate-pin-bounce cursor-pointer"
+                style={{ animationDelay: "0.1s" }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removePin(pin.id);
+                }}
+              />
+            </g>
+          ))}
+        </svg>
+
+        {/* Pin legend */}
+        {pins.length > 0 && (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {pins.map((pin) => (
+              <div
+                key={pin.id}
+                className="flex items-center gap-2 bg-card rounded-lg px-3 py-2 shadow-sm border border-border"
+              >
+                <MapPin className="w-4 h-4 text-destructive" />
+                <span className="text-sm font-medium">{pin.country}</span>
+                <button
+                  onClick={() => removePin(pin.id)}
+                  className="text-muted-foreground hover:text-destructive transition-colors text-sm"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </div>
