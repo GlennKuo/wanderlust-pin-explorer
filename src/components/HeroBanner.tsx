@@ -2,7 +2,7 @@ import heroBannerImage from "@/assets/hero-banner.jpg";
 
 export const HeroBanner = () => {
   return (
-    <div className="relative w-full h-[50vh] md:h-[75vh] min-h-[400px] md:min-h-[600px] overflow-hidden">
+    <div className="relative w-full h-[65vh] md:h-[85vh] min-h-[500px] md:min-h-[700px] overflow-hidden">
       <img
         src={heroBannerImage}
         srcSet={`${heroBannerImage}?w=768 768w, ${heroBannerImage}?w=1024 1024w, ${heroBannerImage}?w=1920 1920w`}
