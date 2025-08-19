@@ -326,11 +326,15 @@ export default function App() {
       </section>
 
       {/* Section 4: Itinerary Preview - Contrasting Gradient Background */}
-      <section className="bg-gradient-preview h-[100vh] min-h-[500px] flex items-center">
-        <div className="mx-auto max-w-5xl px-4 w-full">
-          <div className="rounded-3xl border bg-white/90 backdrop-blur shadow p-5 md:p-6">
-            <h3 className="text-xl font-semibold">Itinerary Preview</h3>
-            <pre className="mt-3 whitespace-pre-wrap text-sm text-slate-700">{preview || "After clicking Generate, your itinerary preview will appear here (stub)."}</pre>
+      <section className="bg-gradient-preview min-h-[100vh] flex items-start py-8 md:py-16">
+        <div className="mx-auto max-w-5xl px-4 w-full min-h-[calc(100vh-4rem)] md:min-h-[calc(100vh-8rem)] flex items-center">
+          <div className="rounded-3xl border bg-white/90 backdrop-blur shadow p-5 md:p-6 w-full max-h-[80vh] overflow-auto">
+            <h3 className="text-xl font-semibold mb-4 sticky top-0 bg-white/90 backdrop-blur pb-2 border-b">Itinerary Preview</h3>
+            <div className="overflow-y-auto max-h-[calc(80vh-6rem)]">
+              <pre className="whitespace-pre-wrap text-sm text-slate-700 leading-relaxed">
+                {preview || "After clicking Generate, your itinerary preview will appear here (stub)."}
+              </pre>
+            </div>
           </div>
         </div>
       </section>
