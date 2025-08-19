@@ -88,14 +88,14 @@ export default function HeroRevolutCarousel({
       <div className="relative z-10 mx-auto grid w-full max-w-7xl grid-cols-12 items-center gap-8 px-4 pt-20 sm:px-6 md:pt-24 lg:pt-28 xl:gap-12">
         {/* Left: huge stacked headline like Revolut */}
         <div className="col-span-12 lg:col-span-6 lg:pr-4">
-          <h1 className="font-black leading-[0.9] tracking-tight text-white text-[11vw] xs:text-[9vw] sm:text-6xl md:text-7xl lg:text-7xl xl:text-8xl drop-shadow-[0_1px_0_rgba(0,0,0,0.15)]">
+          <h1 className="font-black leading-[0.9] tracking-tight text-white text-[13vw] xs:text-[11vw] sm:text-7xl md:text-8xl lg:text-8xl xl:text-9xl 2xl:text-[10rem] drop-shadow-[0_1px_0_rgba(0,0,0,0.15)]">
             {headline.map((line, i) => (
               <span key={i} className="block uppercase">
                 {line}
               </span>
             ))}
           </h1>
-          <p className="mt-4 max-w-lg text-sm md:text-base lg:text-lg text-white/90 leading-relaxed">{subcopy}</p>
+          <p className="mt-4 max-w-lg text-base md:text-lg lg:text-xl xl:text-2xl text-white/90 leading-relaxed">{subcopy}</p>
 
           <div className="mt-6 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
             {ctaHref ? (
