@@ -45,7 +45,7 @@ function BannerCarousel() {
   }, [images.length]);
 
   return (
-    <div className="relative h-[80vh] min-h-[220px] w-full overflow-hidden">
+    <div className="relative h-[100vh] min-h-[220px] w-full overflow-hidden">
       {/* 疊放全部圖片，用透明度切換避免布局跳動 */}
       {images.map((img, i) => (
         <img
