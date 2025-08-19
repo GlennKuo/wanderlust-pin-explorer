@@ -106,6 +106,9 @@ const uid = () => Math.random().toString(36).slice(2, 9);
 // -------------------------------------------------------------
 export default function App() {
   const [pins, setPins] = useState<TripPin[]>([]);
+  const [selectedPin, setSelectedPin] = useState<string | null>(null);
+  const [location, setLocation] = useState("");
+  const [locationError, setLocationError] = useState("");
   const [departDate, setDepartDate] = useState("");
   const [returnDate, setReturnDate] = useState("");
   const [budget, setBudget] = useState("");
@@ -117,7 +120,34 @@ export default function App() {
   const handleAddPin = useCallback((pos: LatLngLiteral, name: string) => {
     setPins((prev) => (prev.length >= 3 ? prev : [...prev, { id: uid(), position: pos, name }]));
   }, []);
-  const handleRemovePin = useCallback((id: string) => setPins((prev) => prev.filter((p) => p.id !== id)), []);
+  
+  const handleRemovePin = useCallback((id: string) => {
+    setPins((prev) => prev.filter((p) => p.id !== id));
+    if (selectedPin === id) {
+      setSelectedPin(null);
+    }
+  }, [selectedPin]);
+
+  const handleLocationChange = useCallback(async (value: string) => {
+    setLocation(value);
+    setLocationError("");
+    
+    const locations = value
+      .split(",")
+      .map(loc => loc.trim())
+      .filter(loc => loc.length > 0);
+    
+    if (locations.length > 3) {
+      setLocationError("Maximum 3 destinations allowed");
+      return;
+    }
+    
+    // Update pins based on typed locations
+    if (locations.length > 0 && locations[locations.length - 1] !== "") {
+      // For demo purposes, we'll just update the location string
+      // In a real app, you'd geocode these locations to get coordinates
+    }
+  }, []);
 
   const mapElRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<L.Map | null>(null);
@@ -154,8 +184,32 @@ export default function App() {
     if (!layer) return;
     layer.clearLayers();
     pins.forEach((p) => {
-      L.marker([p.position.lat, p.position.lng]).addTo(layer);
+      const marker = L.marker([p.position.lat, p.position.lng]);
+      
+      // Style selected pin differently
+      if (selectedPin === p.id) {
+        marker.setIcon(L.icon({
+          iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+          iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+          shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          className: 'selected-marker'
+        }));
+      }
+      
+      marker.on('click', () => {
+        setSelectedPin(p.id);
+      });
+      
+      marker.addTo(layer);
     });
+  }, [pins, selectedPin]);
+
+  // Sync location field with pins
+  useEffect(() => {
+    const locationNames = pins.map(p => p.name).join(", ");
+    setLocation(locationNames);
   }, [pins]);
 
   const validDates = useMemo(() => (!departDate || !returnDate ? true : new Date(departDate) <= new Date(returnDate)), [departDate, returnDate]);
@@ -190,10 +244,24 @@ export default function App() {
         {/* chips overlay */}
           <div className="pointer-events-none absolute left-3 bottom-3 flex flex-wrap gap-2">
             {pins.map((p) => (
-              <div key={p.id} className="pointer-events-auto inline-flex items-center gap-2 rounded-full border bg-white/90 backdrop-blur px-3 py-1 shadow">
-                <span className="text-rose-500">📍</span>
+              <div 
+                key={p.id} 
+                className={`pointer-events-auto inline-flex items-center gap-2 rounded-full border backdrop-blur px-3 py-1 shadow cursor-pointer transition-colors ${
+                  selectedPin === p.id 
+                    ? 'bg-blue-100/90 border-blue-300' 
+                    : 'bg-white/90 hover:bg-slate-50/90'
+                }`}
+                onClick={() => setSelectedPin(p.id)}
+              >
+                <span className={selectedPin === p.id ? "text-blue-500" : "text-rose-500"}>📍</span>
                 <span className="text-sm font-medium">{p.name}</span>
-                <button onClick={() => handleRemovePin(p.id)} className="ml-1 text-slate-500 hover:text-rose-600">×</button>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRemovePin(p.id);
+                  }} 
+                  className="ml-1 text-slate-500 hover:text-rose-600"
+                >×</button>
               </div>
             ))}
           </div>
@@ -206,19 +274,34 @@ export default function App() {
           <h2 className="text-center text-3xl font-semibold tracking-tight">Plan Your Journey</h2>
           <p className="text-center text-slate-500 mt-2">Tell us your dates and budget, and we'll create the perfect itinerary</p>
 
-          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="mt-6 space-y-4">
             <div className="space-y-1">
-              <label className="text-sm font-medium flex items-center gap-2"><span>📅</span>Departure Date</label>
-              <input type="date" className="w-full rounded-2xl border px-4 py-3 bg-slate-50" value={departDate} onChange={(e) => setDepartDate(e.target.value)} />
+              <label className="text-sm font-medium flex items-center gap-2"><span>📍</span>Destinations</label>
+              <input 
+                type="text" 
+                placeholder="Enter up to 3 destinations (comma-separated)" 
+                className="w-full rounded-2xl border px-4 py-3 bg-slate-50" 
+                value={location} 
+                onChange={(e) => handleLocationChange(e.target.value)} 
+              />
+              {locationError && <p className="text-red-600 text-xs mt-1">{locationError}</p>}
+              <p className="text-xs text-slate-500 mt-1">Click on map pins or type destinations separated by commas (max 3)</p>
             </div>
-            <div className="space-y-1">
-              <label className="text-sm font-medium flex items-center gap-2"><span>📅</span>Return Date</label>
-              <input type="date" className="w-full rounded-2xl border px-4 py-3 bg-slate-50" value={returnDate} min={departDate || undefined} onChange={(e) => setReturnDate(e.target.value)} />
-            </div>
-            <div className="space-y-1 md:col-span-2">
-              <label className="text-sm font-medium flex items-center gap-2"><span>💲</span>Budget (USD)</label>
-              <input type="number" min={0} placeholder="Enter your budget" inputMode="numeric" className="w-full rounded-2xl border px-4 py-3 bg-slate-50" value={budget} onChange={(e) => setBudget(e.target.value)} />
-              <p className="text-xs text-slate-500 mt-1">Budget includes flights, accommodation & activities</p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-sm font-medium flex items-center gap-2"><span>📅</span>Departure Date</label>
+                <input type="date" className="w-full rounded-2xl border px-4 py-3 bg-slate-50" value={departDate} onChange={(e) => setDepartDate(e.target.value)} />
+              </div>
+              <div className="space-y-1">
+                <label className="text-sm font-medium flex items-center gap-2"><span>📅</span>Return Date</label>
+                <input type="date" className="w-full rounded-2xl border px-4 py-3 bg-slate-50" value={returnDate} min={departDate || undefined} onChange={(e) => setReturnDate(e.target.value)} />
+              </div>
+              <div className="space-y-1 md:col-span-2">
+                <label className="text-sm font-medium flex items-center gap-2"><span>💲</span>Budget (USD)</label>
+                <input type="number" min={0} placeholder="Enter your budget" inputMode="numeric" className="w-full rounded-2xl border px-4 py-3 bg-slate-50" value={budget} onChange={(e) => setBudget(e.target.value)} />
+                <p className="text-xs text-slate-500 mt-1">Budget includes flights, accommodation & activities</p>
+              </div>
             </div>
           </div>
 
