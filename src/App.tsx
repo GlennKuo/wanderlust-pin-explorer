@@ -273,7 +273,7 @@ export default function App() {
       </section>
 
       {/* Planner card — BELOW map */}
-      <section id="plan" className="mx-auto max-w-4xl px-4 mt-10 md:mt-14">
+      <section id="plan" className="mx-auto max-w-4xl px-4 mt-10 md:mt-14 py-16 bg-gradient-plan rounded-3xl">
         <div className="rounded-3xl border bg-white/90 backdrop-blur shadow-xl p-6 md:p-8">
           <h2 className="text-center text-3xl font-semibold tracking-tight">Plan Your Journey</h2>
           <p className="text-center text-slate-500 mt-2">Tell us your dates and budget, and we'll create the perfect itinerary</p>
