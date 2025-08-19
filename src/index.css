@@ -220,5 +220,5 @@ All colors MUST be HSL.
   .dark .plan-glow { background-color: hsl(222.2 16% 9%); }
   .dark .plan-glow::before { filter: blur(24px) saturate(115%); opacity: .85; }
   .dark .plan-glow::after  { mix-blend-mode: soft-light; }
-  }
+  
 }
