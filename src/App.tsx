@@ -277,7 +277,7 @@ export default function App() {
       </section>
 
       {/* Section 3: Plan Your Journey - Blue Gradient Background */}
-      <section id="plan" className="bg-gradient-plan h-[100vh] min-h-[500px] flex items-center">
+      <section id="plan" className="plan-glow h-[100vh] min-h-[500px] flex items-center">
         <div className="mx-auto max-w-4xl px-4 w-full">
           <div className="rounded-3xl border bg-white/90 backdrop-blur shadow-xl p-6 md:p-8">
             <h2 className="text-center text-3xl font-semibold tracking-tight">Plan Your Journey</h2>
