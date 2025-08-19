@@ -71,6 +71,19 @@ export const Navigation = () => {
                 <a
                   key={item.label}
                   href={item.href}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const targetId = item.href.replace('#', '');
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                      const navHeight = 64; // 4rem = 64px
+                      const elementPosition = targetElement.offsetTop - navHeight;
+                      window.scrollTo({
+                        top: elementPosition,
+                        behavior: 'smooth'
+                      });
+                    }
+                  }}
                   className="text-foreground/80 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
                 >
                   {item.label}
@@ -150,8 +163,21 @@ export const Navigation = () => {
               <a
                 key={item.label}
                 href={item.href}
+                onClick={(e) => {
+                  e.preventDefault();
+                  const targetId = item.href.replace('#', '');
+                  const targetElement = document.getElementById(targetId);
+                  if (targetElement) {
+                    const navHeight = 64; // 4rem = 64px
+                    const elementPosition = targetElement.offsetTop - navHeight;
+                    window.scrollTo({
+                      top: elementPosition,
+                      behavior: 'smooth'
+                    });
+                  }
+                  setIsOpen(false);
+                }}
                 className="text-foreground/80 hover:text-primary block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-                onClick={() => setIsOpen(false)}
               >
                 {item.label}
               </a>
