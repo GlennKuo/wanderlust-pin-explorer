@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import L, { LatLngLiteral } from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { Navigation } from "@/components/Navigation";
 
 // -------------------------------------------------------------
 // Leaflet default icon fix for Vite
@@ -44,7 +45,7 @@ function BannerCarousel() {
   }, [images.length]);
 
   return (
-    <div className="relative h-[60vh] min-h-[220px] w-full overflow-hidden">
+    <div className="relative h-[60vh] min-h-[220px] w-full overflow-hidden pt-16">
       {/* 疊放全部圖片，用透明度切換避免布局跳動 */}
       {images.map((img, i) => (
         <img
@@ -60,7 +61,7 @@ function BannerCarousel() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/10 to-black/40" />
 
       {/* 文字移到左上角 */}
-      <div className="absolute left-0 top-0 px-4 pt-6">
+      <div className="absolute left-0 top-16 px-4 pt-6">
         <div className="mx-auto max-w-6xl text-white">
           <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">Plan Your Journey</h1>
           <p className="text-sm md:text-base opacity-90 mt-1">
@@ -228,10 +229,11 @@ export default function App() {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-[#eaf3ff] via-[#f7fbff] to-[#e6f1ff] text-slate-800">
+      <Navigation />
       <BannerCarousel />
 
       {/* Map block — ABOVE planner */}
-      <section className="mx-auto max-w-5xl px-4 pt-16 md:pt-20">
+      <section id="destinations" className="mx-auto max-w-5xl px-4 pt-16 md:pt-20">
         <div className="text-center">
           <h3 className="text-2xl md:text-3xl font-semibold">Choose Your Destination</h3>
           <p className="text-slate-500 mt-1 text-sm">Click anywhere on the map to place a pin for your dream destination</p>
@@ -269,7 +271,7 @@ export default function App() {
       </section>
 
       {/* Planner card — BELOW map */}
-      <section className="mx-auto max-w-4xl px-4 mt-10 md:mt-14">
+      <section id="plan" className="mx-auto max-w-4xl px-4 mt-10 md:mt-14">
         <div className="rounded-3xl border bg-white/90 backdrop-blur shadow-xl p-6 md:p-8">
           <h2 className="text-center text-3xl font-semibold tracking-tight">Plan Your Journey</h2>
           <p className="text-center text-slate-500 mt-2">Tell us your dates and budget, and we'll create the perfect itinerary</p>
