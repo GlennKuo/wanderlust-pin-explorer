@@ -6,6 +6,7 @@ import { LatLngLiteral } from "leaflet";
 
 const Index = () => {
   const [pins, setPins] = useState<LatLngLiteral[]>([]);
+  const [selectedPin, setSelectedPin] = useState<LatLngLiteral | null>(null);
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Banner */}
@@ -13,12 +14,12 @@ const Index = () => {
 
       {/* World Map Section */}
       <section className="py-16 px-4 bg-gradient-to-b from-background to-muted/20">
-        <WorldMap pins={pins} onPinsChange={setPins} />
+        <WorldMap pins={pins} onPinsChange={setPins} selectedPin={selectedPin} onSelectedPinChange={setSelectedPin} />
       </section>
 
       {/* Plan Your Journey Section */}
       <section className="py-16 px-4 bg-gradient-to-b from-muted/20 to-background">
-        <PlanYourJourney pins={pins} />
+        <PlanYourJourney pins={pins} selectedPin={selectedPin} />
       </section>
 
 

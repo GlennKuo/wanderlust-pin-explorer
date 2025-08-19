@@ -15,9 +15,11 @@ const DefaultIcon = L.icon({
 type WorldMapProps = {
   pins: LatLngLiteral[];
   onPinsChange: React.Dispatch<React.SetStateAction<LatLngLiteral[]>>;
+  selectedPin: LatLngLiteral | null;
+  onSelectedPinChange: React.Dispatch<React.SetStateAction<LatLngLiteral | null>>;
 };
 
-export const WorldMap: React.FC<WorldMapProps> = ({ pins, onPinsChange }) => {
+export const WorldMap: React.FC<WorldMapProps> = ({ pins, onPinsChange, selectedPin, onSelectedPinChange }) => {
   const center = useMemo<LatLngLiteral>(() => ({ lat: 20, lng: 0 }), []);
 
   const mapElRef = useRef<HTMLDivElement | null>(null);
@@ -46,7 +48,9 @@ export const WorldMap: React.FC<WorldMapProps> = ({ pins, onPinsChange }) => {
 
     map.on("click", (e: L.LeafletMouseEvent) => {
       const { lat, lng } = e.latlng;
-      onPinsChange((prev) => [...prev, { lat, lng }]);
+      const newPin = { lat, lng };
+      onPinsChange((prev) => [...prev, newPin]);
+      onSelectedPinChange(newPin);
     });
 
     return () => {
@@ -65,11 +69,29 @@ export const WorldMap: React.FC<WorldMapProps> = ({ pins, onPinsChange }) => {
 
     group.clearLayers();
     pins.forEach((pos) => {
+      const isSelected = selectedPin && selectedPin.lat === pos.lat && selectedPin.lng === pos.lng;
+      
+      // Create custom marker icon based on selection state
+      const markerIcon = L.divIcon({
+        html: `<div class="w-6 h-6 rounded-full border-3 border-white shadow-lg cursor-pointer ${
+          isSelected ? 'bg-blue-500' : 'bg-red-500'
+        } hover:scale-110 transition-transform"></div>`,
+        className: 'custom-marker',
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
+      });
+
       const marker = L.marker([pos.lat, pos.lng], {
-        zIndexOffset: 1000  // Ensure markers always appear above map tiles
+        icon: markerIcon,
+        zIndexOffset: 1000
       }).addTo(group).bindPopup(
         `Lat: ${pos.lat.toFixed(5)}, Lng: ${pos.lng.toFixed(5)}`
       );
+      
+      // Handle marker click to select
+      marker.on('click', () => {
+        onSelectedPinChange(pos);
+      });
       
       // Set high z-index for marker element
       const markerElement = marker.getElement();
@@ -77,7 +99,7 @@ export const WorldMap: React.FC<WorldMapProps> = ({ pins, onPinsChange }) => {
         markerElement.style.zIndex = '1000';
       }
     });
-  }, [pins]);
+  }, [pins, selectedPin, onSelectedPinChange]);
 
   return (
     <div className="w-full max-w-5xl mx-auto">

@@ -14,13 +14,15 @@ interface LocationField {
 
 interface PlanYourJourneyProps {
   pins?: Array<{ lat: number; lng: number; name?: string }>;
+  selectedPin?: { lat: number; lng: number; name?: string } | null;
 }
 
-export const PlanYourJourney: React.FC<PlanYourJourneyProps> = ({ pins = [] }) => {
+export const PlanYourJourney: React.FC<PlanYourJourneyProps> = ({ pins = [], selectedPin = null }) => {
   const [formData, setFormData] = useState({
     startDate: "",
     endDate: "",
     budget: "",
+    location: "",
   });
 
   const [locationFields, setLocationFields] = useState<LocationField[]>(() => {
@@ -37,22 +39,13 @@ export const PlanYourJourney: React.FC<PlanYourJourneyProps> = ({ pins = [] }) =
     return initial;
   });
 
-  // Sync location fields when map pins change
+  // Sync location input when selected pin changes
   useEffect(() => {
-    setLocationFields(prev => {
-      const pinFields: LocationField[] = pins.slice(0, 3).map((pin, index) => ({
-        id: `pin-${index}`,
-        value: pin.name || `Location ${pin.lat.toFixed(2)}, ${pin.lng.toFixed(2)}`,
-        fromPin: true
-      }));
-      const manualFields = prev.filter(f => !f.fromPin);
-      const combined = [...pinFields, ...manualFields].slice(0, 3);
-      if (combined.length === 0) {
-        combined.push({ id: 'manual-1', value: '', fromPin: false });
-      }
-      return combined;
-    });
-  }, [pins]);
+    if (selectedPin) {
+      const locationValue = selectedPin.name || `${selectedPin.lat.toFixed(2)}, ${selectedPin.lng.toFixed(2)}`;
+      setFormData(prev => ({ ...prev, location: locationValue }));
+    }
+  }, [selectedPin]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -78,10 +71,8 @@ export const PlanYourJourney: React.FC<PlanYourJourneyProps> = ({ pins = [] }) =
   }, []);
 
   const handleGenerateTrip = () => {
-    const filledLocations = locationFields.filter(field => field.value.trim());
-    
-    if (!formData.startDate || !formData.endDate || !formData.budget || filledLocations.length === 0) {
-      toast.error("Please fill in all required fields and at least one location!");
+    if (!formData.startDate || !formData.endDate || !formData.budget || !formData.location.trim()) {
+      toast.error("Please fill in all required fields and select a location!");
       return;
     }
 
@@ -89,8 +80,7 @@ export const PlanYourJourney: React.FC<PlanYourJourneyProps> = ({ pins = [] }) =
     // Here you would typically handle the trip generation logic
   };
 
-  const isFormValid = formData.startDate && formData.endDate && formData.budget && 
-                     locationFields.some(field => field.value.trim());
+  const isFormValid = formData.startDate && formData.endDate && formData.budget && formData.location.trim();
 
   return (
     <div className="w-full max-w-2xl mx-auto p-6">
@@ -106,52 +96,28 @@ export const PlanYourJourney: React.FC<PlanYourJourneyProps> = ({ pins = [] }) =
           </div>
 
           <div className="space-y-6">
-            {/* Dynamic Location Fields */}
-            <div className="space-y-4">
-              <Label className="text-sm font-medium text-foreground flex items-center gap-2">
+            {/* Location Input */}
+            <div className="space-y-2">
+              <Label 
+                htmlFor="location" 
+                className="text-sm font-medium text-foreground flex items-center gap-2"
+              >
                 <MapPin className="w-4 h-4 text-primary" />
-                Destinations {locationFields.length > 0 && `(${locationFields.filter(f => f.value.trim()).length})`}
+                Location
               </Label>
-              
-              {locationFields.map((field) => (
-                <div key={field.id} className="flex gap-2 items-center">
-                  <Input
-                    type="text"
-                    placeholder={field.fromPin ? "Location from map pin" : "Enter destination manually"}
-                    value={field.value}
-                    onChange={(e) => handleLocationChange(field.id, e.target.value)}
-                    className="bg-background border-border focus:border-primary focus:ring-primary/20 transition-all duration-200"
-                  />
-                  {field.fromPin && (
-                    <div className="flex-shrink-0 px-2 py-1 bg-primary/10 text-primary text-xs rounded">
-                      From Map
-                    </div>
-                  )}
-                  {!field.fromPin && locationFields.length > 1 && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => removeLocationField(field.id)}
-                      className="flex-shrink-0 text-destructive hover:text-destructive hover:bg-destructive/10"
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
-                  )}
+              <Input
+                id="location"
+                type="text"
+                placeholder={selectedPin ? "Location from map pin (editable)" : "Select a location on the map or type manually"}
+                value={formData.location}
+                onChange={(e) => handleInputChange("location", e.target.value)}
+                className="bg-background border-border focus:border-primary focus:ring-primary/20 transition-all duration-200"
+              />
+              {selectedPin && (
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  Auto-populated from selected map pin
                 </div>
-              ))}
-              
-              {locationFields.length < 3 && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={addLocationField}
-                  className="text-primary hover:text-primary hover:bg-primary/10"
-                >
-                  <Plus className="w-4 h-4 mr-1" />
-                  Add Another Destination
-                </Button>
               )}
             </div>
 
@@ -235,7 +201,7 @@ export const PlanYourJourney: React.FC<PlanYourJourneyProps> = ({ pins = [] }) =
             </div>
 
             {/* Trip preview */}
-            {formData.startDate && formData.endDate && formData.budget && locationFields.some(f => f.value.trim()) && (
+            {formData.startDate && formData.endDate && formData.budget && formData.location.trim() && (
               <div className="mt-6 p-4 bg-muted/30 rounded-lg border border-border/50 animate-slide-up">
                 <h3 className="font-semibold text-foreground mb-2">Trip Preview</h3>
                 <div className="space-y-1 text-sm text-muted-foreground">
@@ -249,7 +215,7 @@ export const PlanYourJourney: React.FC<PlanYourJourneyProps> = ({ pins = [] }) =
                     🗓️ Duration: {Math.ceil((new Date(formData.endDate).getTime() - new Date(formData.startDate).getTime()) / (1000 * 60 * 60 * 24))} days
                   </div>
                   <div>
-                    📍 Destinations: {locationFields.filter(f => f.value.trim()).map(f => f.value.trim()).join(', ')}
+                    📍 Destination: {formData.location}
                   </div>
                 </div>
               </div>
