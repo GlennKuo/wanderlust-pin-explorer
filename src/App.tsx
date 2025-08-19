@@ -193,7 +193,6 @@ export default function App() {
     subcopy="Tell us your dates and budget — we’ll create the perfect itinerary."
     ctaLabel="Plan now"
     ctaHref="#plan"
-    showcasingTitle={pins[0]?.name}
   />
 </div>
 

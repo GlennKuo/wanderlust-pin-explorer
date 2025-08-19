@@ -85,30 +85,30 @@ export default function HeroRevolutCarousel({
       </div>
 
       {/* Content grid */}
-      <div className="relative z-10 mx-auto grid w-full max-w-7xl grid-cols-12 items-center gap-6 px-6 pt-24 sm:px-10 md:pt-28 lg:pt-32">
+      <div className="relative z-10 mx-auto grid w-full max-w-7xl grid-cols-12 items-center gap-8 px-4 pt-20 sm:px-6 md:pt-24 lg:pt-28 xl:gap-12">
         {/* Left: huge stacked headline like Revolut */}
-        <div className="col-span-12 lg:col-span-6">
-          <h1 className="font-black leading-[0.9] tracking-tight text-white text-[12vw] xs:text-[10vw] sm:text-7xl md:text-8xl lg:text-8xl xl:text-[9rem] drop-shadow-[0_1px_0_rgba(0,0,0,0.15)]">
+        <div className="col-span-12 lg:col-span-6 lg:pr-4">
+          <h1 className="font-black leading-[0.9] tracking-tight text-white text-[11vw] xs:text-[9vw] sm:text-6xl md:text-7xl lg:text-7xl xl:text-8xl drop-shadow-[0_1px_0_rgba(0,0,0,0.15)]">
             {headline.map((line, i) => (
               <span key={i} className="block uppercase">
                 {line}
               </span>
             ))}
           </h1>
-          <p className="mt-6 max-w-xl text-base md:text-lg text-white/90">{subcopy}</p>
+          <p className="mt-4 max-w-lg text-sm md:text-base lg:text-lg text-white/90 leading-relaxed">{subcopy}</p>
 
-          <div className="mt-8 flex items-center gap-4">
+          <div className="mt-6 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
             {ctaHref ? (
               <a
                 href={ctaHref}
-                className="rounded-2xl bg-black px-6 py-3 text-white shadow-lg shadow-black/20 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+                className="rounded-2xl bg-black px-6 py-3 text-white shadow-lg shadow-black/20 transition-transform hover:scale-[1.02] active:scale-[0.98] text-sm font-medium"
               >
                 {ctaLabel}
               </a>
             ) : (
               <button
                 onClick={onCtaClick}
-                className="rounded-2xl bg-black px-6 py-3 text-white shadow-lg shadow-black/20 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+                className="rounded-2xl bg-black px-6 py-3 text-white shadow-lg shadow-black/20 transition-transform hover:scale-[1.02] active:scale-[0.98] text-sm font-medium"
               >
                 {ctaLabel}
               </button>
@@ -117,7 +117,7 @@ export default function HeroRevolutCarousel({
             {/* optional secondary link */}
             <a
               href="#itinerary"
-              className="text-sm font-medium text-white/90 underline decoration-white/40 underline-offset-4 hover:text-white"
+              className="text-xs sm:text-sm font-medium text-white/90 underline decoration-white/40 underline-offset-4 hover:text-white"
             >
               See sample itinerary
             </a>
@@ -125,31 +125,31 @@ export default function HeroRevolutCarousel({
         </div>
 
         {/* Right: Glass/outlined card + floating pill */}
-        <div className="relative col-span-12 h-[56vh] min-h-[380px] lg:col-span-6">
+        <div className="relative col-span-12 h-[48vh] min-h-[320px] lg:col-span-6 lg:h-[52vh] lg:min-h-[360px] mt-8 lg:mt-0">
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-            <div className="relative h-[56vh] w-[82vw] max-w-[620px] rounded-[32px] border-2 border-white/70 bg-white/10 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.45)] backdrop-blur-xl">
+            <div className="relative h-[48vh] w-[85vw] max-w-[520px] lg:h-[52vh] lg:w-[28vw] lg:max-w-[580px] rounded-[28px] lg:rounded-[32px] border-2 border-white/70 bg-white/10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.4)] backdrop-blur-xl">
               {/* inner sheen */}
-              <div className="pointer-events-none absolute inset-0 rounded-[30px] bg-gradient-to-b from-white/40 via-white/15 to-white/10" />
+              <div className="pointer-events-none absolute inset-0 rounded-[26px] lg:rounded-[30px] bg-gradient-to-b from-white/40 via-white/15 to-white/10" />
 
               {/* center label */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                <span className="text-sm font-medium uppercase tracking-wide text-white/80">Personal</span>
-                <div className="mt-2 text-5xl font-extrabold tabular-nums text-white">$ 6,012</div>
-                <button className="mt-5 rounded-full bg-white/90 px-5 py-2 text-sm font-semibold text-black shadow-sm transition hover:bg-white">
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
+                <span className="text-xs lg:text-sm font-medium uppercase tracking-wide text-white/80">Personal</span>
+                <div className="mt-2 text-3xl lg:text-4xl xl:text-5xl font-extrabold tabular-nums text-white">$ 6,012</div>
+                <button className="mt-4 lg:mt-5 rounded-full bg-white/90 px-4 lg:px-5 py-2 text-xs lg:text-sm font-semibold text-black shadow-sm transition hover:bg-white">
                   Accounts
                 </button>
               </div>
 
               {/* floating pill at bottom */}
-              <div className="absolute bottom-5 left-1/2 w-[85%] -translate-x-1/2">
-                <div className="mx-auto flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-xl">
-                  <div className="h-8 w-8 shrink-0 rounded-full bg-black/90" />
+              <div className="absolute bottom-4 lg:bottom-5 left-1/2 w-[90%] lg:w-[85%] -translate-x-1/2">
+                <div className="mx-auto flex items-center gap-2 lg:gap-3 rounded-xl lg:rounded-2xl bg-white px-3 lg:px-4 py-2 lg:py-3 shadow-xl">
+                  <div className="h-6 w-6 lg:h-8 lg:w-8 shrink-0 rounded-full bg-black/90" />
                   <div className="flex w-full items-baseline justify-between">
                     <div>
-                      <div className="text-sm font-semibold text-black">Salary</div>
-                      <div className="text-xs text-black/60">Today, 11:28</div>
+                      <div className="text-xs lg:text-sm font-semibold text-black">Salary</div>
+                      <div className="text-[10px] lg:text-xs text-black/60">Today, 11:28</div>
                     </div>
-                    <div className="text-sm font-semibold text-emerald-600">+2,550</div>
+                    <div className="text-xs lg:text-sm font-semibold text-emerald-600">+2,550</div>
                   </div>
                 </div>
               </div>
@@ -157,9 +157,6 @@ export default function HeroRevolutCarousel({
           </div>
         </div>
       </div>
-
-      {/* thin vertical reflection line (optional accent) */}
-      <div className="pointer-events-none absolute inset-y-0 left-1/2 hidden w-px -translate-x-1/2 bg-white/30 md:block" />
     </section>
   );
 }
