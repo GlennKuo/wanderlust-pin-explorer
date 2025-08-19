@@ -76,7 +76,7 @@ export const Navigation = () => {
                     const targetId = item.href.replace('#', '');
                     const targetElement = document.getElementById(targetId);
                     if (targetElement) {
-                      const navHeight = 64; // 4rem = 64px
+                      const navHeight = 80; // Navigation height + extra padding for better visibility
                       const elementPosition = targetElement.offsetTop - navHeight;
                       window.scrollTo({
                         top: elementPosition,
@@ -168,7 +168,7 @@ export const Navigation = () => {
                   const targetId = item.href.replace('#', '');
                   const targetElement = document.getElementById(targetId);
                   if (targetElement) {
-                    const navHeight = 64; // 4rem = 64px
+                    const navHeight = 80; // Navigation height + extra padding for better visibility
                     const elementPosition = targetElement.offsetTop - navHeight;
                     window.scrollTo({
                       top: elementPosition,
