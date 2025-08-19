@@ -2,34 +2,31 @@ import heroBannerImage from "@/assets/hero-banner.jpg";
 
 export const HeroBanner = () => {
   return (
-    <div className="relative w-full h-[85vh] min-h-[700px] overflow-hidden bg-gradient-hero">
-      {/* Revolut-style hero content */}
-      <div className="absolute inset-0 flex items-center text-left">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 w-full">
-          <div className="max-w-3xl animate-slide-up">
-            <h1 className="text-6xl md:text-7xl lg:text-8xl font-black text-white mb-8 leading-none tracking-tight">
-              CHANGE THE WAY
-              <br />
-              <span className="text-white/90">YOU TRAVEL</span>
-            </h1>
-            <p className="text-xl md:text-2xl text-white/80 mb-12 max-w-2xl leading-relaxed">
-              Home or away, local or global — move freely between countries and cultures. 
-              Plan your perfect journey, in a tap.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button className="bg-secondary text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-secondary/90 hover:scale-105 transition-all duration-200 shadow-dark">
-                Start Planning
-              </button>
-              <button className="bg-white/10 text-white border border-white/20 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/20 transition-all duration-200 backdrop-blur-sm">
-                Explore Destinations
-              </button>
-            </div>
-          </div>
+    <div className="relative w-full h-[65vh] md:h-[85vh] min-h-[500px] md:min-h-[700px] overflow-hidden">
+      <img
+        src={heroBannerImage}
+        srcSet={`${heroBannerImage}?w=768 768w, ${heroBannerImage}?w=1024 1024w, ${heroBannerImage}?w=1920 1920w`}
+        sizes="100vw"
+        alt="Discover your next adventure - breathtaking travel destinations"
+        className="w-full h-full object-cover object-center"
+        loading="lazy"
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/70" />
+      
+      {/* Content overlay */}
+      <div className="absolute inset-0 flex items-center justify-center text-center">
+        <div className="max-w-4xl px-6 text-white animate-slide-up">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4 drop-shadow-lg">
+            Discover Your Next
+            <span className="block bg-gradient-hero bg-clip-text text-transparent">
+              Adventure
+            </span>
+          </h1>
+          <p className="text-lg md:text-xl lg:text-2xl mb-8 drop-shadow-md opacity-90">
+            Explore breathtaking destinations around the world
+          </p>
         </div>
       </div>
-      
-      {/* Background pattern overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-primary/5 to-primary/10" />
     </div>
   );
 };

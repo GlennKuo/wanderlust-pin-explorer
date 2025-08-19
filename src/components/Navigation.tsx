@@ -48,8 +48,8 @@ export const Navigation = () => {
     <nav
       className={`fixed top-0 left-0 right-0 z-[10000] transition-all duration-300 ${
         isScrolled
-          ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200/50'
-          : 'bg-white/80 backdrop-blur-md'
+          ? 'bg-background/95 backdrop-blur-md shadow-lg border-b border-border'
+          : 'bg-background/20 backdrop-blur-md'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -57,7 +57,10 @@ export const Navigation = () => {
           {/* Logo */}
           <div className="flex-shrink-0">
             <a href="/" className="flex items-center space-x-2">
-              <span className="text-2xl font-black text-primary">TravelPlanner</span>
+              <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-lg">W</span>
+              </div>
+              <span className="text-xl font-bold text-foreground">Wanderlust</span>
             </a>
           </div>
 
@@ -81,7 +84,7 @@ export const Navigation = () => {
                       });
                     }
                   }}
-                  className="text-gray-700 hover:text-primary px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-200 hover:bg-gray-50"
+                  className="text-foreground/80 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
                 >
                   {item.label}
                 </a>
@@ -91,15 +94,47 @@ export const Navigation = () => {
 
           {/* Desktop Right Side */}
           <div className="hidden md:flex items-center space-x-4">
-            {/* Sign In/Sign Up Buttons */}
-            <div className="flex items-center space-x-3">
-              <Button variant="ghost" className="text-gray-600 hover:text-primary font-semibold">
-                Log in
-              </Button>
-              <Button variant="cta" className="font-semibold">
-                Sign up
-              </Button>
-            </div>
+            {/* Language Selector */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-9 w-9 p-0">
+                  <Globe className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-popover/95 backdrop-blur-md">
+                {languages.map((lang) => (
+                  <DropdownMenuItem key={lang.code}>
+                    {lang.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Currency Selector */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-9 w-9 p-0">
+                  <DollarSign className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-popover/95 backdrop-blur-md">
+                {currencies.map((currency) => (
+                  <DropdownMenuItem key={currency.code}>
+                    {currency.symbol} {currency.code}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Sign In Button */}
+            <Button 
+              variant="default" 
+              size="sm"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground"
+            >
+              <User className="h-4 w-4 mr-2" />
+              Sign In
+            </Button>
           </div>
 
           {/* Mobile menu button */}
@@ -123,7 +158,7 @@ export const Navigation = () => {
       {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 bg-white/95 backdrop-blur-md border-t border-gray-200/50">
+          <div className="px-2 pt-2 pb-3 space-y-1 bg-background/95 backdrop-blur-md border-t border-border">
             {menuItems.map((item) => (
               <a
                 key={item.label}
@@ -142,20 +177,59 @@ export const Navigation = () => {
                   }
                   setIsOpen(false);
                 }}
-                className="text-gray-700 hover:text-primary block px-3 py-2 rounded-md text-base font-semibold transition-all duration-200 hover:bg-gray-50"
+                className="text-foreground/80 hover:text-primary block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
               >
                 {item.label}
               </a>
             ))}
             
-            {/* Mobile Sign In */}
-            <div className="border-t border-gray-200 pt-4 mt-4">
-              <div className="px-3 py-2 space-y-3">
-                <Button variant="ghost" className="w-full justify-start text-gray-600 hover:text-primary font-semibold">
-                  Log in
-                </Button>
-                <Button variant="cta" className="w-full font-semibold" onClick={() => setIsOpen(false)}>
-                  Sign up
+            {/* Mobile Controls */}
+            <div className="border-t border-border pt-4 mt-4">
+              <div className="flex items-center justify-between px-3 py-2">
+                <span className="text-sm font-medium text-foreground/80">Language</span>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm">
+                      <Globe className="h-4 w-4 mr-2" />
+                      EN
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="bg-popover/95 backdrop-blur-md">
+                    {languages.map((lang) => (
+                      <DropdownMenuItem key={lang.code}>
+                        {lang.label}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+              
+              <div className="flex items-center justify-between px-3 py-2">
+                <span className="text-sm font-medium text-foreground/80">Currency</span>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm">
+                      <DollarSign className="h-4 w-4 mr-2" />
+                      USD
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="bg-popover/95 backdrop-blur-md">
+                    {currencies.map((currency) => (
+                      <DropdownMenuItem key={currency.code}>
+                        {currency.symbol} {currency.code}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+              
+              <div className="px-3 py-2">
+                <Button 
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <User className="h-4 w-4 mr-2" />
+                  Sign In
                 </Button>
               </div>
             </div>

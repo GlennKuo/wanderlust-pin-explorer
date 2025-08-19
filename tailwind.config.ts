@@ -65,12 +65,12 @@ export default {
 			},
 			backgroundImage: {
 				'gradient-primary': 'var(--gradient-primary)',
+				'gradient-sunset': 'var(--gradient-sunset)',
 				'gradient-hero': 'var(--gradient-hero)',
-				'gradient-button': 'var(--gradient-button)',
 			},
 			boxShadow: {
-				'primary': 'var(--shadow-primary)',
-				'dark': 'var(--shadow-dark)',
+				'travel': 'var(--shadow-travel)',
+				'warm': 'var(--shadow-warm)',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
