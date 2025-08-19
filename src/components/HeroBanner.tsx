@@ -2,12 +2,16 @@ import heroBannerImage from "@/assets/hero-banner.jpg";
 
 export const HeroBanner = () => {
   return (
-    <div className="relative w-full h-[70vh] min-h-[500px] overflow-hidden">
-      <div 
-        className="w-full h-full bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${heroBannerImage})` }}
+    <div className="relative w-full h-[50vh] md:h-[75vh] min-h-[400px] md:min-h-[600px] overflow-hidden">
+      <img
+        src={heroBannerImage}
+        srcSet={`${heroBannerImage}?w=768 768w, ${heroBannerImage}?w=1024 1024w, ${heroBannerImage}?w=1920 1920w`}
+        sizes="100vw"
+        alt="Discover your next adventure - breathtaking travel destinations"
+        className="w-full h-full object-cover object-center"
+        loading="lazy"
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/60" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/70" />
       
       {/* Content overlay */}
       <div className="absolute inset-0 flex items-center justify-center text-center">
