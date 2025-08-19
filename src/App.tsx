@@ -29,10 +29,10 @@ export type TripPin = {
 function BannerCarousel() {
   const images = useMemo(
     () => [
-      { url: "https://images.unsplash.com/photo-1491553895911-0055eca6402d?q=80&w=1920&auto=format&fit=crop", title: "Paris, France" },
-      { url: "https://images.unsplash.com/photo-1473959920023-1f462a5f0e51?q=80&w=1920&auto=format&fit=crop", title: "Tokyo, Japan" },
-      { url: "https://images.unsplash.com/photo-1488747279002-c8523379faaa?q=80&w=1920&auto=format&fit=crop", title: "New York, USA" },
-      { url: "https://images.unsplash.com/photo-1505761671935-60b3a7427bad?q=80&w=1920&auto=format&fit=crop", title: "Sydney, Australia" },
+      { url: "https://images.pexels.com/photos/2082103/pexels-photo-2082103.jpeg", title: "Paris, France" },
+      { url: "https://images.pexels.com/photos/1822605/pexels-photo-1822605.jpeg", title: "Tokyo, Japan" },
+      { url: "https://images.pexels.com/photos/32715940/pexels-photo-32715940.jpeg", title: "New York, USA" },
+      { url: "https://images.pexels.com/photos/31726431/pexels-photo-31726431.jpeg", title: "Sydney, Australia" },
     ],
     []
   );
