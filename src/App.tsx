@@ -1,5 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import L, { LatLngLiteral } from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -100,20 +99,7 @@ async function reverseGeocode(lat: number, lon: number): Promise<string> {
 }
 const uid = () => Math.random().toString(36).slice(2, 9);
 
-// -------------------------------------------------------------
-// Map Click Handler
-// -------------------------------------------------------------
-function ClickToAddPin({ canAdd, onAdd }: { canAdd: boolean; onAdd: (pos: LatLngLiteral, resolvedName: string) => void }) {
-  useMapEvents({
-    click: async (e) => {
-      if (!canAdd) return;
-      const { lat, lng } = e.latlng;
-      const name = await reverseGeocode(lat, lng);
-      onAdd({ lat, lng }, name);
-    },
-  });
-  return null;
-}
+// (Removed react-leaflet ClickToAddPin; using pure Leaflet click handler in useEffect)
 
 // -------------------------------------------------------------
 // Main
@@ -132,6 +118,45 @@ export default function App() {
     setPins((prev) => (prev.length >= 3 ? prev : [...prev, { id: uid(), position: pos, name }]));
   }, []);
   const handleRemovePin = useCallback((id: string) => setPins((prev) => prev.filter((p) => p.id !== id)), []);
+
+  const mapElRef = useRef<HTMLDivElement | null>(null);
+  const mapRef = useRef<L.Map | null>(null);
+  const markersLayerRef = useRef<L.LayerGroup | null>(null);
+
+  useEffect(() => {
+    if (!mapElRef.current || mapRef.current) return;
+    const map = L.map(mapElRef.current).setView([center.lat, center.lng], 3);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "&copy; OpenStreetMap",
+    }).addTo(map);
+
+    const layer = L.layerGroup().addTo(map);
+    markersLayerRef.current = layer;
+
+    map.on("click", async (e: any) => {
+      if (!canAddMore) return;
+      const { lat, lng } = e.latlng;
+      const name = await reverseGeocode(lat, lng);
+      handleAddPin({ lat, lng }, name);
+    });
+
+    mapRef.current = map;
+    return () => {
+      map.off();
+      map.remove();
+      mapRef.current = null;
+      markersLayerRef.current = null;
+    };
+  }, [center, canAddMore, handleAddPin]);
+
+  useEffect(() => {
+    const layer = markersLayerRef.current;
+    if (!layer) return;
+    layer.clearLayers();
+    pins.forEach((p) => {
+      L.marker([p.position.lat, p.position.lng]).addTo(layer);
+    });
+  }, [pins]);
 
   const validDates = useMemo(() => (!departDate || !returnDate ? true : new Date(departDate) <= new Date(returnDate)), [departDate, returnDate]);
 
@@ -160,13 +185,7 @@ export default function App() {
         </div>
 
         <div className="relative mt-6 rounded-3xl overflow-hidden border shadow-lg bg-gradient-to-br from-sky-50 via-white to-amber-50">
-          <MapContainer center={center} zoom={3} scrollWheelZoom className="h-[440px] w-full">
-            <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            <ClickToAddPin canAdd={canAddMore} onAdd={(pos, name) => handleAddPin(pos, name)} />
-            {pins.map((p) => (
-              <Marker key={p.id} position={p.position} />
-            ))}
-          </MapContainer>
+          <div ref={mapElRef} className="h-[440px] w-full" aria-label="Interactive world map" />
 
         {/* chips overlay */}
           <div className="pointer-events-none absolute left-3 bottom-3 flex flex-wrap gap-2">
