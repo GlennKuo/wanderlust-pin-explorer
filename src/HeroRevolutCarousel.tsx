@@ -90,7 +90,7 @@ export default function HeroRevolutCarousel({
         <div className="col-span-12 lg:col-span-6 lg:pr-4">
           <h1 className="font-black leading-[0.9] tracking-tight text-white text-[13vw] xs:text-[11vw] sm:text-7xl md:text-8xl lg:text-8xl xl:text-9xl 2xl:text-[10rem] drop-shadow-[0_1px_0_rgba(0,0,0,0.15)]">
             {headline.map((line, i) => (
-              <span key={i} className={`uppercase ${i === 0 ? 'inline' : 'block'}`}>
+              <span key={i} className="block uppercase">
                 {line}
               </span>
             ))}
