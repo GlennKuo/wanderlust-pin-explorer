@@ -1,6 +1,7 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import L, { LatLngLiteral, Map as LeafletMap, LayerGroup } from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { LegendControlComponent } from "./LegendControl";
 
 // Fix Leaflet default icon paths when bundling with Vite
 const DefaultIcon = L.icon({
@@ -21,6 +22,7 @@ type WorldMapProps = {
 
 export const WorldMap: React.FC<WorldMapProps> = ({ pins, onPinsChange, selectedPin, onSelectedPinChange }) => {
   const center = useMemo<LatLngLiteral>(() => ({ lat: 20, lng: 0 }), []);
+  const [showLegend, setShowLegend] = useState(true);
 
   const mapElRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<LeafletMap | null>(null);
@@ -125,6 +127,14 @@ export const WorldMap: React.FC<WorldMapProps> = ({ pins, onPinsChange, selected
       <div className="relative rounded-2xl border shadow-travel bg-gradient-to-br from-primary/10 to-accent/10 p-2">
         <div ref={mapElRef} className="h-[440px] w-full rounded-xl overflow-hidden" style={{ zIndex: 1 }} />
         
+        {/* Legend Control Component */}
+        <LegendControlComponent
+          map={mapRef.current}
+          locationName="Jiangxi Province"
+          onClose={() => setShowLegend(false)}
+          show={showLegend}
+        />
+        
         {/* Custom Attribution/Legend Overlay */}
         <div className="absolute bottom-4 right-4 z-[9999] bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-600 shadow-lg pointer-events-none">
           <div className="flex items-center gap-2">
@@ -133,6 +143,18 @@ export const WorldMap: React.FC<WorldMapProps> = ({ pins, onPinsChange, selected
             <span>🌍 <a href="https://leafletjs.com/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline pointer-events-auto">Leaflet</a></span>
           </div>
         </div>
+
+        {/* Button to show legend again if closed */}
+        {!showLegend && (
+          <div className="absolute bottom-4 left-4 z-[9999]">
+            <button
+              onClick={() => setShowLegend(true)}
+              className="bg-white hover:bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 shadow-lg transition-colors"
+            >
+              Show Legend
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
