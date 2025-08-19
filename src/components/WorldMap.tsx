@@ -61,14 +61,30 @@ export const WorldMap: React.FC = () => {
 
     group.clearLayers();
     pins.forEach((pos) => {
-      L.marker([pos.lat, pos.lng]).addTo(group).bindPopup(
+      const marker = L.marker([pos.lat, pos.lng], {
+        zIndexOffset: 1000  // Ensure markers always appear above map tiles
+      }).addTo(group).bindPopup(
         `Lat: ${pos.lat.toFixed(5)}, Lng: ${pos.lng.toFixed(5)}`
       );
+      
+      // Set high z-index for marker element
+      const markerElement = marker.getElement();
+      if (markerElement) {
+        markerElement.style.zIndex = '1000';
+      }
     });
   }, [pins]);
 
   return (
     <div className="w-full max-w-5xl mx-auto">
+      {/* Instruction Label */}
+      <div className="text-center mb-4">
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full text-sm font-medium text-primary">
+          <span className="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+          You can select up to 3 cities
+        </div>
+      </div>
+
       <div className="text-center mb-6">
         <h2 className="text-2xl md:text-3xl font-bold text-foreground">Choose Your Destination</h2>
         <p className="text-muted-foreground mt-1 text-sm">Click anywhere on the map to place a pin</p>
@@ -78,7 +94,7 @@ export const WorldMap: React.FC = () => {
       </div>
 
       <div className="relative rounded-2xl border shadow-travel bg-gradient-to-br from-primary/10 to-accent/10 p-2">
-        <div ref={mapElRef} className="h-[440px] w-full rounded-xl overflow-hidden" />
+        <div ref={mapElRef} className="h-[440px] w-full rounded-xl overflow-hidden" style={{ zIndex: 1 }} />
       </div>
     </div>
   );

@@ -1,24 +1,21 @@
 import { WorldMap } from "@/components/WorldMap";
-// import { TravelForm } from "@/components/TravelForm";
+import { HeroBanner } from "@/components/HeroBanner";
+import { PlanYourJourney } from "@/components/PlanYourJourney";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <header className="relative bg-gradient-to-b from-primary/10 via-background to-background">
-        <div className="max-w-6xl mx-auto px-4 py-16 md:py-24 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-foreground tracking-tight">
-            Discover Your Next Adventure
-          </h1>
-          <p className="mt-4 text-muted-foreground text-lg">
-            Explore breathtaking destinations around the world
-          </p>
-        </div>
-      </header>
+      {/* Hero Banner */}
+      <HeroBanner />
 
       {/* World Map Section */}
       <section className="py-16 px-4 bg-gradient-to-b from-background to-muted/20">
         <WorldMap />
+      </section>
+
+      {/* Plan Your Journey Section */}
+      <section className="py-16 px-4 bg-gradient-to-b from-muted/20 to-background">
+        <PlanYourJourney />
       </section>
 
 
