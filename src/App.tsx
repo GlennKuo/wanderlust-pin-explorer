@@ -228,7 +228,7 @@ export default function App() {
   }, [pins, departDate, returnDate, budget]);
 
   return (
-    <div className="min-h-screen w-full bg-black text-white">
+    <div className="min-h-screen w-full text-slate-800">
       <Navigation />
       
       {/* Section 1: Banner - Hero Image */}
@@ -236,13 +236,13 @@ export default function App() {
         <BannerCarousel />
       </div>
 
-      {/* Section 2: Choose Your Destination - Dark Background */}
-      <section id="destinations" className="bg-black h-[100vh] min-h-[500px] flex items-center">
+      {/* Section 2: Choose Your Destination - Clean White/Light Background */}
+      <section id="destinations" className="bg-white h-[100vh] min-h-[500px] flex items-center">
         <div className="mx-auto max-w-5xl px-4 w-full">
           <div className="text-center">
-            <h3 className="text-2xl md:text-3xl font-semibold text-white">Choose Your Destination</h3>
-            <p className="text-gray-300 mt-1 text-sm">Click anywhere on the map to place a pin for your dream destination</p>
-            <div className="mt-1 text-sky-300 text-sm">{pins.length} destination{pins.length === 1 ? "" : "s"} selected</div>
+            <h3 className="text-2xl md:text-3xl font-semibold">Choose Your Destination</h3>
+            <p className="text-slate-500 mt-1 text-sm">Click anywhere on the map to place a pin for your dream destination</p>
+            <div className="mt-1 text-sky-600 text-sm">{pins.length} destination{pins.length === 1 ? "" : "s"} selected</div>
           </div>
 
           <div className="relative mt-6 rounded-3xl overflow-hidden border shadow-lg bg-gradient-to-br from-sky-50 via-white to-amber-50">
@@ -339,7 +339,7 @@ export default function App() {
         </div>
       </section>
 
-      <footer className="bg-gray-900 py-12 text-center text-xs text-gray-400">
+      <footer className="bg-slate-100 py-12 text-center text-xs text-slate-500">
         <div className="mx-auto max-w-6xl px-4">
           © {new Date().getFullYear()} Wanderlust — UI demo. Map: OpenStreetMap + Leaflet.
         </div>
