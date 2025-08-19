@@ -228,107 +228,117 @@ export default function App() {
   }, [pins, departDate, returnDate, budget]);
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-[#eaf3ff] via-[#f7fbff] to-[#e6f1ff] text-slate-800">
+    <div className="min-h-screen w-full text-slate-800">
       <Navigation />
+      
+      {/* Section 1: Banner - Hero Image */}
       <div className="pt-16">
         <BannerCarousel />
       </div>
 
-      {/* Map block — ABOVE planner */}
-      <section id="destinations" className="mx-auto max-w-5xl px-4 pt-8 md:pt-12">
-        <div className="text-center">
-          <h3 className="text-2xl md:text-3xl font-semibold">Choose Your Destination</h3>
-          <p className="text-slate-500 mt-1 text-sm">Click anywhere on the map to place a pin for your dream destination</p>
-          <div className="mt-1 text-sky-600 text-sm">{pins.length} destination{pins.length === 1 ? "" : "s"} selected</div>
-        </div>
-
-        <div className="relative mt-6 rounded-3xl overflow-hidden border shadow-lg bg-gradient-to-br from-sky-50 via-white to-amber-50">
-          <div ref={mapElRef} className="h-[440px] w-full" aria-label="Interactive world map" />
-
-        {/* chips overlay */}
-          <div className="pointer-events-none absolute left-3 bottom-3 flex flex-wrap gap-2">
-            {pins.map((p) => (
-              <div 
-                key={p.id} 
-                className={`pointer-events-auto inline-flex items-center gap-2 rounded-full border backdrop-blur px-3 py-1 shadow cursor-pointer transition-colors ${
-                  selectedPin === p.id 
-                    ? 'bg-blue-100/90 border-blue-300' 
-                    : 'bg-white/90 hover:bg-slate-50/90'
-                }`}
-                onClick={() => setSelectedPin(p.id)}
-              >
-                <span className={selectedPin === p.id ? "text-blue-500" : "text-rose-500"}>📍</span>
-                <span className="text-sm font-medium">{p.name}</span>
-                <button 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleRemovePin(p.id);
-                  }} 
-                  className="ml-1 text-slate-500 hover:text-rose-600"
-                >×</button>
-              </div>
-            ))}
+      {/* Section 2: Choose Your Destination - Clean White/Light Background */}
+      <section id="destinations" className="bg-white py-16">
+        <div className="mx-auto max-w-5xl px-4">
+          <div className="text-center">
+            <h3 className="text-2xl md:text-3xl font-semibold">Choose Your Destination</h3>
+            <p className="text-slate-500 mt-1 text-sm">Click anywhere on the map to place a pin for your dream destination</p>
+            <div className="mt-1 text-sky-600 text-sm">{pins.length} destination{pins.length === 1 ? "" : "s"} selected</div>
           </div>
-        </div>
-      </section>
 
-      {/* Planner card — BELOW map */}
-      <section id="plan" className="mx-auto max-w-4xl px-4 mt-10 md:mt-14 py-16 bg-gradient-plan rounded-3xl">
-        <div className="rounded-3xl border bg-white/90 backdrop-blur shadow-xl p-6 md:p-8">
-          <h2 className="text-center text-3xl font-semibold tracking-tight">Plan Your Journey</h2>
-          <p className="text-center text-slate-500 mt-2">Tell us your dates and budget, and we'll create the perfect itinerary</p>
+          <div className="relative mt-6 rounded-3xl overflow-hidden border shadow-lg bg-gradient-to-br from-sky-50 via-white to-amber-50">
+            <div ref={mapElRef} className="h-[440px] w-full" aria-label="Interactive world map" />
 
-          <div className="mt-6 space-y-4">
-            <div className="space-y-1">
-              <label className="text-sm font-medium flex items-center gap-2"><span>📍</span>Destinations</label>
-              <input 
-                type="text" 
-                placeholder="Enter up to 3 destinations (comma-separated)" 
-                className="w-full rounded-2xl border px-4 py-3 bg-slate-50" 
-                value={location} 
-                onChange={(e) => handleLocationChange(e.target.value)} 
-              />
-              {locationError && <p className="text-red-600 text-xs mt-1">{locationError}</p>}
-              <p className="text-xs text-slate-500 mt-1">Click on map pins or type destinations separated by commas (max 3)</p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className="text-sm font-medium flex items-center gap-2"><span>📅</span>Departure Date</label>
-                <input type="date" className="w-full rounded-2xl border px-4 py-3 bg-slate-50" value={departDate} onChange={(e) => setDepartDate(e.target.value)} />
-              </div>
-              <div className="space-y-1">
-                <label className="text-sm font-medium flex items-center gap-2"><span>📅</span>Return Date</label>
-                <input type="date" className="w-full rounded-2xl border px-4 py-3 bg-slate-50" value={returnDate} min={departDate || undefined} onChange={(e) => setReturnDate(e.target.value)} />
-              </div>
-              <div className="space-y-1 md:col-span-2">
-                <label className="text-sm font-medium flex items-center gap-2"><span>💲</span>Budget (USD)</label>
-                <input type="number" min={0} placeholder="Enter your budget" inputMode="numeric" className="w-full rounded-2xl border px-4 py-3 bg-slate-50" value={budget} onChange={(e) => setBudget(e.target.value)} />
-                <p className="text-xs text-slate-500 mt-1">Budget includes flights, accommodation & activities</p>
-              </div>
+          {/* chips overlay */}
+            <div className="pointer-events-none absolute left-3 bottom-3 flex flex-wrap gap-2">
+              {pins.map((p) => (
+                <div 
+                  key={p.id} 
+                  className={`pointer-events-auto inline-flex items-center gap-2 rounded-full border backdrop-blur px-3 py-1 shadow cursor-pointer transition-colors ${
+                    selectedPin === p.id 
+                      ? 'bg-blue-100/90 border-blue-300' 
+                      : 'bg-white/90 hover:bg-slate-50/90'
+                  }`}
+                  onClick={() => setSelectedPin(p.id)}
+                >
+                  <span className={selectedPin === p.id ? "text-blue-500" : "text-rose-500"}>📍</span>
+                  <span className="text-sm font-medium">{p.name}</span>
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemovePin(p.id);
+                    }} 
+                    className="ml-1 text-slate-500 hover:text-rose-600"
+                  >×</button>
+                </div>
+              ))}
             </div>
           </div>
+        </div>
+      </section>
 
-          {!validDates && <div className="text-red-600 text-sm mt-3">Return date must be after departure date.</div>}
+      {/* Section 3: Plan Your Journey - Blue Gradient Background */}
+      <section id="plan" className="bg-gradient-plan py-16">
+        <div className="mx-auto max-w-4xl px-4">
+          <div className="rounded-3xl border bg-white/90 backdrop-blur shadow-xl p-6 md:p-8">
+            <h2 className="text-center text-3xl font-semibold tracking-tight">Plan Your Journey</h2>
+            <p className="text-center text-slate-500 mt-2">Tell us your dates and budget, and we'll create the perfect itinerary</p>
 
-          <div className="mt-6">
-            <button onClick={generate} disabled={!pins.length || !departDate || !returnDate || !validDates} className="w-full rounded-2xl bg-sky-300 hover:bg-sky-400 text-white py-4 font-semibold disabled:opacity-40 disabled:cursor-not-allowed">
-              ✈️  Generate My Trip
-            </button>
+            <div className="mt-6 space-y-4">
+              <div className="space-y-1">
+                <label className="text-sm font-medium flex items-center gap-2"><span>📍</span>Destinations</label>
+                <input 
+                  type="text" 
+                  placeholder="Enter up to 3 destinations (comma-separated)" 
+                  className="w-full rounded-2xl border px-4 py-3 bg-slate-50" 
+                  value={location} 
+                  onChange={(e) => handleLocationChange(e.target.value)} 
+                />
+                {locationError && <p className="text-red-600 text-xs mt-1">{locationError}</p>}
+                <p className="text-xs text-slate-500 mt-1">Click on map pins or type destinations separated by commas (max 3)</p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-sm font-medium flex items-center gap-2"><span>📅</span>Departure Date</label>
+                  <input type="date" className="w-full rounded-2xl border px-4 py-3 bg-slate-50" value={departDate} onChange={(e) => setDepartDate(e.target.value)} />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-sm font-medium flex items-center gap-2"><span>📅</span>Return Date</label>
+                  <input type="date" className="w-full rounded-2xl border px-4 py-3 bg-slate-50" value={returnDate} min={departDate || undefined} onChange={(e) => setReturnDate(e.target.value)} />
+                </div>
+                <div className="space-y-1 md:col-span-2">
+                  <label className="text-sm font-medium flex items-center gap-2"><span>💲</span>Budget (USD)</label>
+                  <input type="number" min={0} placeholder="Enter your budget" inputMode="numeric" className="w-full rounded-2xl border px-4 py-3 bg-slate-50" value={budget} onChange={(e) => setBudget(e.target.value)} />
+                  <p className="text-xs text-slate-500 mt-1">Budget includes flights, accommodation & activities</p>
+                </div>
+              </div>
+            </div>
+
+            {!validDates && <div className="text-red-600 text-sm mt-3">Return date must be after departure date.</div>}
+
+            <div className="mt-6">
+              <button onClick={generate} disabled={!pins.length || !departDate || !returnDate || !validDates} className="w-full rounded-2xl bg-sky-300 hover:bg-sky-400 text-white py-4 font-semibold disabled:opacity-40 disabled:cursor-not-allowed">
+                ✈️  Generate My Trip
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Preview */}
-      <section className="mx-auto max-w-5xl px-4 mt-10 md:mt-14 mb-16">
-        <div className="rounded-3xl border bg-white/90 backdrop-blur shadow p-5 md:p-6">
-          <h3 className="text-xl font-semibold">Itinerary Preview</h3>
-          <pre className="mt-3 whitespace-pre-wrap text-sm text-slate-700">{preview || "After clicking Generate, your itinerary preview will appear here (stub)."}</pre>
+      {/* Section 4: Itinerary Preview - Contrasting Gradient Background */}
+      <section className="bg-gradient-preview py-16">
+        <div className="mx-auto max-w-5xl px-4">
+          <div className="rounded-3xl border bg-white/90 backdrop-blur shadow p-5 md:p-6">
+            <h3 className="text-xl font-semibold">Itinerary Preview</h3>
+            <pre className="mt-3 whitespace-pre-wrap text-sm text-slate-700">{preview || "After clicking Generate, your itinerary preview will appear here (stub)."}</pre>
+          </div>
         </div>
       </section>
 
-      <footer className="mx-auto max-w-6xl px-4 pb-10 text-center text-xs text-slate-500">
-        © {new Date().getFullYear()} Wanderlust — UI demo. Map: OpenStreetMap + Leaflet.
+      <footer className="bg-slate-100 py-12 text-center text-xs text-slate-500">
+        <div className="mx-auto max-w-6xl px-4">
+          © {new Date().getFullYear()} Wanderlust — UI demo. Map: OpenStreetMap + Leaflet.
+        </div>
       </footer>
     </div>
   );

@@ -68,6 +68,7 @@ export default {
 				'gradient-sunset': 'var(--gradient-sunset)',
 				'gradient-hero': 'var(--gradient-hero)',
 				'gradient-plan': 'var(--gradient-plan)',
+				'gradient-preview': 'var(--gradient-preview)',
 			},
 			boxShadow: {
 				'travel': 'var(--shadow-travel)',
