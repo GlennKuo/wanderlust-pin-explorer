@@ -1,9 +1,5 @@
 import { createRoot } from 'react-dom/client'
 import './index.css'
+import App from './App'
 
-createRoot(document.getElementById("root")!).render(
-  <div style={{padding: 20, textAlign: 'center'}}>
-    <h1>App Loading...</h1>
-    <p>Healthcheck successful</p>
-  </div>
-);
+createRoot(document.getElementById('root')!).render(<App />)
