@@ -1,6 +1,5 @@
-import React, { useMemo, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
-import L, { LatLngLiteral } from "leaflet";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import L, { LatLngLiteral, Map as LeafletMap, LayerGroup } from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 // Fix Leaflet default icon paths when bundling with Vite
@@ -13,18 +12,60 @@ const DefaultIcon = L.icon({
 });
 (L.Marker.prototype as any).options.icon = DefaultIcon;
 
-function ClickToAdd({ onAdd }: { onAdd: (pos: LatLngLiteral) => void }) {
-  useMapEvents({
-    click: (e) => {
-      onAdd({ lat: e.latlng.lat, lng: e.latlng.lng });
-    },
-  });
-  return null;
-}
-
 export const WorldMap: React.FC = () => {
   const [pins, setPins] = useState<LatLngLiteral[]>([]);
   const center = useMemo<LatLngLiteral>(() => ({ lat: 20, lng: 0 }), []);
+
+  const mapElRef = useRef<HTMLDivElement | null>(null);
+  const mapRef = useRef<LeafletMap | null>(null);
+  const markersRef = useRef<LayerGroup | null>(null);
+
+  // Initialize map once
+  useEffect(() => {
+    if (!mapElRef.current || mapRef.current) return;
+
+    const map = L.map(mapElRef.current, {
+      center: [center.lat, center.lng],
+      zoom: 2,
+      scrollWheelZoom: true,
+      worldCopyJump: true,
+    });
+    mapRef.current = map;
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
+      crossOrigin: true,
+    }).addTo(map);
+
+    const group = L.layerGroup().addTo(map);
+    markersRef.current = group;
+
+    map.on("click", (e: L.LeafletMouseEvent) => {
+      const { lat, lng } = e.latlng;
+      setPins((prev) => [...prev, { lat, lng }]);
+    });
+
+    return () => {
+      map.off();
+      map.remove();
+      mapRef.current = null;
+      markersRef.current = null;
+    };
+  }, [center]);
+
+  // Render markers imperatively when pins change
+  useEffect(() => {
+    const group = markersRef.current;
+    const map = mapRef.current;
+    if (!group || !map) return;
+
+    group.clearLayers();
+    pins.forEach((pos) => {
+      L.marker([pos.lat, pos.lng]).addTo(group).bindPopup(
+        `Lat: ${pos.lat.toFixed(5)}, Lng: ${pos.lng.toFixed(5)}`
+      );
+    });
+  }, [pins]);
 
   return (
     <div className="w-full max-w-5xl mx-auto">
@@ -37,27 +78,7 @@ export const WorldMap: React.FC = () => {
       </div>
 
       <div className="relative rounded-2xl border shadow-travel bg-gradient-to-br from-primary/10 to-accent/10 p-2">
-        <MapContainer
-          center={center}
-          zoom={2}
-          scrollWheelZoom
-          className="h-[440px] w-full rounded-xl overflow-hidden"
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-
-          <ClickToAdd onAdd={(pos) => setPins(prev => [...prev, pos])} />
-
-          {pins.map((pos, i) => (
-            <Marker key={`${pos.lat}-${pos.lng}-${i}`} position={pos}>
-              <Popup>
-                Lat: {pos.lat.toFixed(5)}, Lng: {pos.lng.toFixed(5)}
-              </Popup>
-            </Marker>
-          ))}
-        </MapContainer>
+        <div ref={mapElRef} className="h-[440px] w-full rounded-xl overflow-hidden" />
       </div>
     </div>
   );
