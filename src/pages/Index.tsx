@@ -18,7 +18,7 @@ const Index = () => {
       </section>
 
       {/* Plan Your Journey Section */}
-      <section id="plan" className="py-16 px-4 bg-gradient-lovable">
+      <section id="plan" className="py-16 px-4 bg-gradient-to-b from-muted/20 to-background">
         <PlanYourJourney pins={pins} selectedPin={selectedPin} />
       </section>
 
