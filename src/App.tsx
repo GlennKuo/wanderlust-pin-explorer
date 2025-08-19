@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import L, { LatLngLiteral } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Navigation } from "@/components/Navigation";
+import HeroRevolutCarousel from "@/HeroRevolutCarousel";
 
 // -------------------------------------------------------------
 // Leaflet default icon fix for Vite
@@ -24,60 +25,7 @@ export type TripPin = {
   name: string; // 城市或地名（只抓名稱）
 };
 
-// -------------------------------------------------------------
-// Banner（簡約輪播，避免 Tailwind 自訂時長語法造成警告）
-// -------------------------------------------------------------
-function BannerCarousel() {
-  const images = useMemo(
-    () => [
-      { url: "https://images.pexels.com/photos/2082103/pexels-photo-2082103.jpeg", title: "Paris, France" },
-      { url: "https://images.pexels.com/photos/1822605/pexels-photo-1822605.jpeg", title: "Tokyo, Japan" },
-      { url: "https://images.pexels.com/photos/32715940/pexels-photo-32715940.jpeg", title: "New York, USA" },
-      { url: "https://images.pexels.com/photos/31726431/pexels-photo-31726431.jpeg", title: "Sydney, Australia" },
-    ],
-    []
-  );
 
-  const [idx, setIdx] = useState(0);
-  useEffect(() => {
-    const id = setInterval(() => setIdx((i) => (i + 1) % images.length), 5000);
-    return () => clearInterval(id);
-  }, [images.length]);
-
-  return (
-    <div className="relative h-[100vh] min-h-[220px] w-full overflow-hidden">
-      {/* 疊放全部圖片，用透明度切換避免布局跳動 */}
-      {images.map((img, i) => (
-        <img
-          key={img.url}
-          src={img.url}
-          alt={img.title}
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${i === idx ? "opacity-100" : "opacity-0"}`}
-          loading={i === 0 ? "eager" : "lazy"}
-        />
-      ))}
-
-      {/* 漸層疊層，讓文字更清楚 */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/10 to-black/40" />
-
-      {/* 文字移到左上角 */}
-      <div className="absolute left-0 top-0 px-4 pt-6">
-        <div className="mx-auto max-w-6xl text-white">
-          <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">Plan Your Journey</h1>
-          <p className="text-sm md:text-base opacity-90 mt-1">
-            Tell us your dates and budget, and we'll create the perfect itinerary.
-          </p>
-          <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs backdrop-blur">
-            <span className="inline-block h-2 w-2 rounded-full bg-lime-300" />
-            <span>Showcasing: {images[idx].title}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// -------------------------------------------------------------
 // Utilities
 // -------------------------------------------------------------
 async function reverseGeocode(lat: number, lon: number): Promise<string> {
@@ -232,9 +180,22 @@ export default function App() {
       <Navigation />
       
       {/* Section 1: Banner - Hero Image */}
-      <div className="pt-16">
-        <BannerCarousel />
-      </div>
+     <div className="pt-16">
+  <HeroRevolutCarousel
+    images={[
+      { url: "https://images.pexels.com/photos/2082103/pexels-photo-2082103.jpeg?w=1920", title: "Paris, France" },
+      { url: "https://images.pexels.com/photos/1822605/pexels-photo-1822605.jpeg?w=1920", title: "Tokyo, Japan" },
+      { url: "https://images.pexels.com/photos/32715940/pexels-photo-32715940.jpeg?w=1920", title: "New York, USA" },
+      { url: "https://images.pexels.com/photos/31726431/pexels-photo-31726431.jpeg?w=1920", title: "Sydney, Australia" },
+    ]}
+    intervalMs={5000}
+    headline={["PLAN YOUR", "JOURNEY"]}
+    subcopy="Tell us your dates and budget — we’ll create the perfect itinerary."
+    ctaLabel="Plan now"
+    ctaHref="#plan"
+    showcasingTitle={pins[0]?.name}
+  />
+</div>
 
       {/* Section 2: Choose Your Destination - Black Background */}
       <section id="destinations" className="bg-black h-[100vh] min-h-[500px] flex items-center">
