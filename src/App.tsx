@@ -61,7 +61,7 @@ function BannerCarousel() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/10 to-black/40" />
 
       {/* 文字移到左上角 */}
-      <div className="absolute left-0 top-16 px-4 pt-6">
+      <div className="absolute left-0 top-0 px-4 pt-6">
         <div className="mx-auto max-w-6xl text-white">
           <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">Plan Your Journey</h1>
           <p className="text-sm md:text-base opacity-90 mt-1">
