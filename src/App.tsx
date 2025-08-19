@@ -108,12 +108,102 @@ export default function App() {
   const [pins, setPins] = useState<TripPin[]>([]);
   const [selectedPin, setSelectedPin] = useState<TripPin | null>(null);
   const [location, setLocation] = useState("");
+  const [locationError, setLocationError] = useState("");
   const [departDate, setDepartDate] = useState("");
   const [returnDate, setReturnDate] = useState("");
   const [budget, setBudget] = useState("");
   const [preview, setPreview] = useState("");
 
+  // Geocoding utility function
+  const geocodeLocation = useCallback(async (locationName: string): Promise<LatLngLiteral | null> => {
+    try {
+      const url = new URL("https://nominatim.openstreetmap.org/search");
+      url.searchParams.set("format", "jsonv2");
+      url.searchParams.set("q", locationName.trim());
+      url.searchParams.set("limit", "1");
+      
+      const res = await fetch(url.toString(), { headers: { "Accept-Language": "en" } });
+      const data = await res.json();
+      
+      if (data && data.length > 0) {
+        return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  }, []);
+
+  // Parse comma-separated locations and validate
+  const parseLocations = useCallback((value: string) => {
+    const locations = value.split(',').map(loc => loc.trim()).filter(loc => loc.length > 0);
+    
+    if (locations.length > 3) {
+      setLocationError("Maximum 3 destinations allowed");
+      return { isValid: false, locations };
+    }
+    
+    setLocationError("");
+    return { isValid: true, locations };
+  }, []);
+
+  // Sync location field with pins
+  const syncLocationWithPins = useCallback(() => {
+    const locationValue = pins.map(pin => pin.name).join(', ');
+    setLocation(locationValue);
+    setSelectedPin(null); // Clear selection when syncing multiple pins
+  }, []);
+
+  // Handle location input changes
+  const handleLocationChange = useCallback(async (value: string) => {
+    setLocation(value);
+    
+    const { isValid, locations } = parseLocations(value);
+    
+    if (!isValid) return;
+    
+    // If we have fewer locations than pins, remove excess pins
+    if (locations.length < pins.length) {
+      const newPins = pins.slice(0, locations.length);
+      setPins(newPins);
+      setSelectedPin(null);
+    }
+    
+    // Update existing pins or add new ones
+    const updatedPins: TripPin[] = [];
+    
+    for (let i = 0; i < locations.length; i++) {
+      const locationName = locations[i];
+      const existingPin = pins[i];
+      
+      if (existingPin) {
+        // Update existing pin name
+        updatedPins.push({ ...existingPin, name: locationName });
+      } else {
+        // Try to geocode and add new pin
+        const coords = await geocodeLocation(locationName);
+        if (coords) {
+          updatedPins.push({
+            id: uid(),
+            position: coords,
+            name: locationName
+          });
+        }
+      }
+    }
+    
+    setPins(updatedPins);
+  }, [pins, parseLocations, geocodeLocation]);
+  
   const canAddMore = pins.length < 3;
+
+  // Sync location field when pins change (from map clicks)
+  useEffect(() => {
+    if (!selectedPin) {
+      syncLocationWithPins();
+    }
+  }, [pins, selectedPin, syncLocationWithPins]);
+
   const center = useMemo<LatLngLiteral>(() => ({ lat: 23.6978, lng: 120.9605 }), []);
 
   const handleAddPin = useCallback((pos: LatLngLiteral, name: string) => {
@@ -252,31 +342,56 @@ export default function App() {
             {/* Location Input */}
             <div className="space-y-1">
               <label className="text-sm font-medium flex items-center gap-2">
-                <span>📍</span>Location
+                <span>📍</span>Destinations (up to 3)
               </label>
               <input 
                 type="text"
-                placeholder={selectedPin ? "Location from map pin (editable)" : "Select a location on the map or type manually"}
+                placeholder="Enter destinations separated by commas (e.g., Paris, Tokyo, New York)"
                 value={selectedPin ? selectedPin.name : location}
                 onChange={(e) => {
                   if (selectedPin) {
-                    // Update the selected pin's name
+                    // Update the selected pin's name only
                     setPins(prev => prev.map(p => 
                       p.id === selectedPin.id ? { ...p, name: e.target.value } : p
                     ));
                     setSelectedPin(prev => prev ? { ...prev, name: e.target.value } : null);
                   } else {
-                    setLocation(e.target.value);
+                    // Handle comma-separated input
+                    handleLocationChange(e.target.value);
                   }
                 }}
-                className="w-full rounded-2xl border px-4 py-3 bg-slate-50" 
+                className={`w-full rounded-2xl border px-4 py-3 bg-slate-50 ${
+                  locationError ? 'border-red-400 focus:border-red-500' : ''
+                }`}
               />
-              {selectedPin && (
-                <div className="flex items-center gap-2 text-xs text-slate-500">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  Auto-populated from selected map pin
+              
+              {/* Status indicators */}
+              <div className="space-y-1">
+                {selectedPin && (
+                  <div className="flex items-center gap-2 text-xs text-slate-500">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    Editing selected map pin
+                  </div>
+                )}
+                
+                {!selectedPin && pins.length > 0 && (
+                  <div className="flex items-center gap-2 text-xs text-slate-500">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    {pins.length} destination{pins.length === 1 ? '' : 's'} from map pins
+                  </div>
+                )}
+                
+                {locationError && (
+                  <div className="flex items-center gap-2 text-xs text-red-600">
+                    <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                    {locationError}
+                  </div>
+                )}
+                
+                <div className="text-xs text-slate-400">
+                  Tip: Click map pins to edit individual destinations, or type here for bulk entry
                 </div>
-              )}
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -301,7 +416,7 @@ export default function App() {
           <div className="mt-6">
             <button 
               onClick={generate} 
-              disabled={!pins.length || !departDate || !returnDate || !validDates || (!selectedPin && !location.trim())} 
+              disabled={!pins.length || !departDate || !returnDate || !validDates || !!locationError} 
               className="w-full rounded-2xl bg-sky-300 hover:bg-sky-400 text-white py-4 font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
             >
               ✈️  Generate My Trip
