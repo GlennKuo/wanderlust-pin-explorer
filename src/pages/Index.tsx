@@ -1,8 +1,11 @@
 import { WorldMap } from "@/components/WorldMap";
 import { HeroBanner } from "@/components/HeroBanner";
 import { PlanYourJourney } from "@/components/PlanYourJourney";
+import { useState } from "react";
+import { LatLngLiteral } from "leaflet";
 
 const Index = () => {
+  const [pins, setPins] = useState<LatLngLiteral[]>([]);
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Banner */}
@@ -10,12 +13,12 @@ const Index = () => {
 
       {/* World Map Section */}
       <section className="py-16 px-4 bg-gradient-to-b from-background to-muted/20">
-        <WorldMap />
+        <WorldMap pins={pins} onPinsChange={setPins} />
       </section>
 
       {/* Plan Your Journey Section */}
       <section className="py-16 px-4 bg-gradient-to-b from-muted/20 to-background">
-        <PlanYourJourney />
+        <PlanYourJourney pins={pins} />
       </section>
 
 

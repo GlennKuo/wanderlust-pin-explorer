@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import L, { LatLngLiteral, Map as LeafletMap, LayerGroup } from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -12,8 +12,12 @@ const DefaultIcon = L.icon({
 });
 (L.Marker.prototype as any).options.icon = DefaultIcon;
 
-export const WorldMap: React.FC = () => {
-  const [pins, setPins] = useState<LatLngLiteral[]>([]);
+type WorldMapProps = {
+  pins: LatLngLiteral[];
+  onPinsChange: React.Dispatch<React.SetStateAction<LatLngLiteral[]>>;
+};
+
+export const WorldMap: React.FC<WorldMapProps> = ({ pins, onPinsChange }) => {
   const center = useMemo<LatLngLiteral>(() => ({ lat: 20, lng: 0 }), []);
 
   const mapElRef = useRef<HTMLDivElement | null>(null);
@@ -42,7 +46,7 @@ export const WorldMap: React.FC = () => {
 
     map.on("click", (e: L.LeafletMouseEvent) => {
       const { lat, lng } = e.latlng;
-      setPins((prev) => [...prev, { lat, lng }]);
+      onPinsChange((prev) => [...prev, { lat, lng }]);
     });
 
     return () => {

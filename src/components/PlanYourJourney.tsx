@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Calendar, DollarSign, Plane, MapPin, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,6 +36,23 @@ export const PlanYourJourney: React.FC<PlanYourJourneyProps> = ({ pins = [] }) =
     
     return initial;
   });
+
+  // Sync location fields when map pins change
+  useEffect(() => {
+    setLocationFields(prev => {
+      const pinFields: LocationField[] = pins.slice(0, 3).map((pin, index) => ({
+        id: `pin-${index}`,
+        value: pin.name || `Location ${pin.lat.toFixed(2)}, ${pin.lng.toFixed(2)}`,
+        fromPin: true
+      }));
+      const manualFields = prev.filter(f => !f.fromPin);
+      const combined = [...pinFields, ...manualFields].slice(0, 3);
+      if (combined.length === 0) {
+        combined.push({ id: 'manual-1', value: '', fromPin: false });
+      }
+      return combined;
+    });
+  }, [pins]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
