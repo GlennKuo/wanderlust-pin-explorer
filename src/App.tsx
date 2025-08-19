@@ -45,7 +45,7 @@ function BannerCarousel() {
   }, [images.length]);
 
   return (
-    <div className="relative h-[60vh] min-h-[220px] w-full overflow-hidden pt-16">
+    <div className="relative h-[60vh] min-h-[220px] w-full overflow-hidden">
       {/* 疊放全部圖片，用透明度切換避免布局跳動 */}
       {images.map((img, i) => (
         <img
@@ -230,10 +230,12 @@ export default function App() {
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-[#eaf3ff] via-[#f7fbff] to-[#e6f1ff] text-slate-800">
       <Navigation />
-      <BannerCarousel />
+      <div className="pt-16">
+        <BannerCarousel />
+      </div>
 
       {/* Map block — ABOVE planner */}
-      <section id="destinations" className="mx-auto max-w-5xl px-4 pt-16 md:pt-20">
+      <section id="destinations" className="mx-auto max-w-5xl px-4 pt-8 md:pt-12">
         <div className="text-center">
           <h3 className="text-2xl md:text-3xl font-semibold">Choose Your Destination</h3>
           <p className="text-slate-500 mt-1 text-sm">Click anywhere on the map to place a pin for your dream destination</p>

@@ -119,15 +119,15 @@ All colors MUST be HSL.
   }
 }
 
-/* Ensure Leaflet markers always render above map tiles */
+/* Ensure Leaflet markers always render above map tiles but below navigation */
 .leaflet-pane.leaflet-tile-pane { z-index: 200 !important; }
 .leaflet-pane.leaflet-overlay-pane { z-index: 400 !important; }
 .leaflet-pane.leaflet-marker-pane { z-index: 800 !important; }
 .leaflet-marker-icon, .leaflet-marker-shadow { z-index: 800 !important; }
 
-/* Ensure Leaflet attribution/legend is always on top */
+/* Ensure Leaflet controls stay below navigation */
 .leaflet-control-attribution { 
-  z-index: 9999 !important; 
+  z-index: 9000 !important; 
   background: rgba(255, 255, 255, 0.9) !important;
   backdrop-filter: blur(4px) !important;
   border-radius: 6px !important;
@@ -136,8 +136,8 @@ All colors MUST be HSL.
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
 }
 
-.leaflet-control-container { z-index: 9999 !important; }
-.leaflet-control { z-index: 9999 !important; }
+.leaflet-control-container { z-index: 9000 !important; }
+.leaflet-control { z-index: 9000 !important; }
 
 /* Hide any remaining default attribution controls */
 .leaflet-control-attribution {
