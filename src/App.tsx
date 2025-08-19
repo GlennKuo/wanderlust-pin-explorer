@@ -237,8 +237,8 @@ export default function App() {
       </div>
 
       {/* Section 2: Choose Your Destination - Clean White/Light Background */}
-      <section id="destinations" className="bg-white py-16">
-        <div className="mx-auto max-w-5xl px-4">
+      <section id="destinations" className="bg-white h-[100vh] min-h-[500px] flex items-center">
+        <div className="mx-auto max-w-5xl px-4 w-full">
           <div className="text-center">
             <h3 className="text-2xl md:text-3xl font-semibold">Choose Your Destination</h3>
             <p className="text-slate-500 mt-1 text-sm">Click anywhere on the map to place a pin for your dream destination</p>
@@ -246,7 +246,7 @@ export default function App() {
           </div>
 
           <div className="relative mt-6 rounded-3xl overflow-hidden border shadow-lg bg-gradient-to-br from-sky-50 via-white to-amber-50">
-            <div ref={mapElRef} className="h-[440px] w-full" aria-label="Interactive world map" />
+            <div ref={mapElRef} className="h-[350px] md:h-[440px] w-full" aria-label="Interactive world map" />
 
           {/* chips overlay */}
             <div className="pointer-events-none absolute left-3 bottom-3 flex flex-wrap gap-2">
@@ -277,8 +277,8 @@ export default function App() {
       </section>
 
       {/* Section 3: Plan Your Journey - Blue Gradient Background */}
-      <section id="plan" className="bg-gradient-plan py-16">
-        <div className="mx-auto max-w-4xl px-4">
+      <section id="plan" className="bg-gradient-plan h-[100vh] min-h-[500px] flex items-center">
+        <div className="mx-auto max-w-4xl px-4 w-full">
           <div className="rounded-3xl border bg-white/90 backdrop-blur shadow-xl p-6 md:p-8">
             <h2 className="text-center text-3xl font-semibold tracking-tight">Plan Your Journey</h2>
             <p className="text-center text-slate-500 mt-2">Tell us your dates and budget, and we'll create the perfect itinerary</p>
@@ -326,8 +326,8 @@ export default function App() {
       </section>
 
       {/* Section 4: Itinerary Preview - Contrasting Gradient Background */}
-      <section className="bg-gradient-preview py-16">
-        <div className="mx-auto max-w-5xl px-4">
+      <section className="bg-gradient-preview h-[100vh] min-h-[500px] flex items-center">
+        <div className="mx-auto max-w-5xl px-4 w-full">
           <div className="rounded-3xl border bg-white/90 backdrop-blur shadow p-5 md:p-6">
             <h3 className="text-xl font-semibold">Itinerary Preview</h3>
             <pre className="mt-3 whitespace-pre-wrap text-sm text-slate-700">{preview || "After clicking Generate, your itinerary preview will appear here (stub)."}</pre>
