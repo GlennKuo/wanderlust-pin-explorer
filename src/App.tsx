@@ -236,13 +236,13 @@ export default function App() {
         <BannerCarousel />
       </div>
 
-      {/* Section 2: Choose Your Destination - Clean White/Light Background */}
-      <section id="destinations" className="bg-white h-[100vh] min-h-[500px] flex items-center">
+      {/* Section 2: Choose Your Destination - Black Background */}
+      <section id="destinations" className="bg-black h-[100vh] min-h-[500px] flex items-center">
         <div className="mx-auto max-w-5xl px-4 w-full">
           <div className="text-center">
-            <h3 className="text-2xl md:text-3xl font-semibold">Choose Your Destination</h3>
-            <p className="text-slate-500 mt-1 text-sm">Click anywhere on the map to place a pin for your dream destination</p>
-            <div className="mt-1 text-sky-600 text-sm">{pins.length} destination{pins.length === 1 ? "" : "s"} selected</div>
+            <h3 className="text-2xl md:text-3xl font-semibold text-white">Choose Your Destination</h3>
+            <p className="text-white mt-1 text-sm">Click anywhere on the map to place a pin for your dream destination</p>
+            <div className="mt-1 text-blue-300 text-sm">{pins.length} destination{pins.length === 1 ? "" : "s"} selected</div>
           </div>
 
           <div className="relative mt-6 rounded-3xl overflow-hidden border shadow-lg bg-gradient-to-br from-sky-50 via-white to-amber-50">
