@@ -164,61 +164,83 @@ All colors MUST be HSL.
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    min-height: 100vh;                         /* 確保能看到完整光暈 */
-    background-color: hsl(var(--background));  /* 以你的 --background 為底 */
+    min-height: 100vh;
+    background-color: hsl(var(--background));
   }
 
-  /* 雙向光暈：上方冷藍、下方暖橘（更像 Lovable 首頁） */
+  /* 1) 大面積暈染：上藍、下暖（保留柔和過渡，降低 blur 才能讓條紋可見） */
   .plan-glow::before {
     content: "";
     position: absolute;
-    inset: -20% -10%;
-    z-index: 0;                 /* 放在內容下、背景上；不要用 -1 以免被蓋掉 */
+    inset: -15% -8%;
+    z-index: 0;
     pointer-events: none;
     background-image:
-      radial-gradient(1200px 700px at 50% -10%,
+      radial-gradient(1200px 720px at 50% -8%,
         hsl(210 100% 92%) 0%,
         hsl(216 95% 85%) 25%,
-        hsl(224 88% 72%) 50%,
+        hsl(224 88% 72%) 52%,
         hsl(232 78% 60%) 70%,
         transparent 78%),
-      radial-gradient(1200px 650px at 50% 115%,
+      radial-gradient(1200px 680px at 50% 114%,
         hsla(15 95% 74% / .95) 0%,
-        hsla(22 95% 70% / .85) 35%,
-        hsla(28 85% 64% / .65) 55%,
+        hsla(22 95% 70% / .85) 36%,
+        hsla(28 85% 64% / .65) 56%,
         transparent 72%);
-    filter: blur(18px);
+    /* 不要過度 blur，否則會抹掉條紋層 */
+    filter: blur(8px);
     opacity: .95;
     transform: translateZ(0);
   }
 
-  /* 顆粒 + 輕微暗角，讓邊緣更乾淨、質感更像原圖 */
+  /* 2) 同心圓條紋 + 顆粒 + 暗角（條紋用 repeating-radial-gradient 疊加） */
   .plan-glow::after {
     content: "";
     position: absolute;
     inset: 0;
-    z-index: 1;  /* 疊在光暈上，但仍在內容下 */
+    z-index: 1;                        /* 在暈染上、內容下 */
     pointer-events: none;
+
+    /* A. 頂部藍色同心圓  B. 底部暖色同心圓  C. 顆粒  D. 輕微暗角 */
     background-image:
+      /* A: top blue rings */
+      repeating-radial-gradient(
+        circle at 50% 0%,
+        rgba(255,255,255,0.16) 0px,
+        rgba(255,255,255,0.16) 14px,
+        rgba(255,255,255,0.00) 14px,
+        rgba(255,255,255,0.00) 42px
+      ),
+      /* B: bottom warm rings */
+      repeating-radial-gradient(
+        circle at 50% 100%,
+        rgba(255,170,120,0.14) 0px,
+        rgba(255,170,120,0.14) 12px,
+        rgba(255,170,120,0.00) 12px,
+        rgba(255,170,120,0.00) 38px
+      ),
+      /* C: subtle grain (data URI) */
       url("data:image/svg+xml;utf8,\
 <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>\
-<filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncA type='linear' slope='0.06'/></feComponentTransfer></filter>\
+<filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncA type='linear' slope='0.05'/></feComponentTransfer></filter>\
 <rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
+      /* D: vignette */
       radial-gradient(120% 70% at 50% 45%, rgba(0,0,0,0) 60%, rgba(0,0,0,.06) 100%);
-    background-repeat: repeat, no-repeat;
-    background-size: 240px 240px, cover;
-    mix-blend-mode: overlay;
+
+    background-repeat: no-repeat, no-repeat, repeat, no-repeat;
+    background-size: cover, cover, 240px 240px, cover;
+
+    /* 用混色模式讓條紋與底色融合，才會像圖一樣“浮在空氣中” */
+    mix-blend-mode: normal;            /* 容器層 */
   }
 
-  /* 內容層永遠在最上面 */
-  .plan-glow > * {
-    position: relative;
-    z-index: 2;
-  }
+  /* 讓內容浮在所有特效之上 */
+  .plan-glow > * { position: relative; z-index: 2; }
 
-  /* 深色模式微調（若有 .dark） */
+  /* 深色模式（若有） */
   .dark .plan-glow { background-color: hsl(222.2 16% 9%); }
-  .dark .plan-glow::before { filter: blur(24px) saturate(115%); opacity: .85; }
-  .dark .plan-glow::after  { mix-blend-mode: soft-light; }
-  
+  .dark .plan-glow::before { filter: blur(10px) saturate(115%); opacity:.88; }
+  .dark .plan-glow::after  { /* 條紋在深色下更柔和 */
+    filter: saturate(110%);
+  }
 }
