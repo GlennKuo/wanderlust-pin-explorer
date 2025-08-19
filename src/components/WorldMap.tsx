@@ -48,7 +48,7 @@ export const WorldMap: React.FC = () => {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
 
-          <ClickToAdd onAdd={(pos) => setPins((prev) => [...prev, pos])} />
+          <ClickToAdd onAdd={(pos) => setPins(prev => [...prev, pos])} />
 
           {pins.map((pos, i) => (
             <Marker key={`${pos.lat}-${pos.lng}-${i}`} position={pos}>
