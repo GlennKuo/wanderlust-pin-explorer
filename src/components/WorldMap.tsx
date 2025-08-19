@@ -39,9 +39,12 @@ export const WorldMap: React.FC<WorldMapProps> = ({ pins, onPinsChange, selected
     mapRef.current = map;
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
+      attribution: '',  // Remove default attribution to handle it separately
       crossOrigin: true,
     }).addTo(map);
+
+    // Disable default attribution control
+    map.attributionControl.remove();
 
     const group = L.layerGroup().addTo(map);
     markersRef.current = group;
@@ -121,6 +124,15 @@ export const WorldMap: React.FC<WorldMapProps> = ({ pins, onPinsChange, selected
 
       <div className="relative rounded-2xl border shadow-travel bg-gradient-to-br from-primary/10 to-accent/10 p-2">
         <div ref={mapElRef} className="h-[440px] w-full rounded-xl overflow-hidden" style={{ zIndex: 1 }} />
+        
+        {/* Custom Attribution/Legend Overlay */}
+        <div className="absolute bottom-4 right-4 z-[9999] bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-600 shadow-lg pointer-events-none">
+          <div className="flex items-center gap-2">
+            <span>© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline pointer-events-auto">OpenStreetMap</a></span>
+            <span>•</span>
+            <span>🌍 <a href="https://leafletjs.com/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline pointer-events-auto">Leaflet</a></span>
+          </div>
+        </div>
       </div>
     </div>
   );

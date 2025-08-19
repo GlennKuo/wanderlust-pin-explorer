@@ -138,3 +138,8 @@ All colors MUST be HSL.
 
 .leaflet-control-container { z-index: 9999 !important; }
 .leaflet-control { z-index: 9999 !important; }
+
+/* Hide any remaining default attribution controls */
+.leaflet-control-attribution {
+  display: none !important;
+}
